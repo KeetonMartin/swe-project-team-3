@@ -4,6 +4,9 @@
     "express": "^4.17.3",
     "mongoose": "^6.2.9"
   },
+  "scripts": {
+    "start": "nodemon scholarshipr/index.js"
+  },
   "devDependencies": {
     "nodemon": "^2.0.15"
   }
