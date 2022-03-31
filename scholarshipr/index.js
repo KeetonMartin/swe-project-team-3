@@ -6,22 +6,22 @@ var app = express();
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// import the Person class from Person.js
-var Person = require('./Person.js');
+// import the scholarship class from Scholarship.js
+var Scholarship = require('./Scholarship.js');
 
 /***************************************/
 
-// endpoint for creating a new person
-// this is the action of the "create new person" form
+// endpoint for creating a new 
+// this is the action of the "create new scholarship" form
 app.use('/create', (req, res) => {
-	// construct the Person from the form data which is in the request body
-	var newPerson = new Person ({
+	// construct the scholarship from the form data which is in the request body
+	var newScholarship = new Scholarship ({
 		name: req.body.name,
 		age: req.body.age,
 	    });
 
-	// save the person to the database
-	newPerson.save( (err) => { 
+	// save the scholarship to the database
+	newScholarship.save( (err) => { 
 		if (err) {
 		    res.type('html').status(200);
 		    res.write('uh oh: ' + err);
@@ -30,7 +30,7 @@ app.use('/create', (req, res) => {
 		}
 		else {
 		    // display the "successfull created" message
-		    res.send('successfully added ' + newPerson.name + ' to the database');
+		    res.send('successfully added ' + newScholarship.name + ' to the database');
 		}
 	    } ); 
     }
@@ -39,15 +39,15 @@ app.use('/create', (req, res) => {
 // endpoint for showing all the people
 app.use('/all', (req, res) => {
     
-	// find all the Person objects in the database
-	Person.find( {}, (err, persons) => {
+	// find all the scholarship objects in the database
+	Scholarship.find( {}, (err, scholarships) => {
 		if (err) {
 		    res.type('html').status(200);
 		    console.log('uh oh' + err);
 		    res.write(err);
 		}
 		else {
-		    if (persons.length == 0) {
+		    if (scholarships.length == 0) {
 			res.type('html').status(200);
 			res.write('There are no people');
 			res.end();
@@ -58,11 +58,11 @@ app.use('/all', (req, res) => {
 			res.write('Here are the people in the database:');
 			res.write('<ul>');
 			// show all the people
-			persons.forEach( (person) => {
+			scholarships.forEach( (scholarship) => {
 			    res.write('<li>');
-			    res.write('Name: ' + person.name + '; age: ' + person.age);
+			    res.write('Name: ' + scholarship.name + '; age: ' + scholarship.age);
 			    // this creates a link to the /delete endpoint
-			    res.write(" <a href=\"/delete?name=" + person.name + "\">[Delete]</a>");
+			    res.write(" <a href=\"/delete?name=" + scholarship.name + "\">[Delete]</a>");
 			    res.write('</li>');
 					 
 			});
@@ -82,7 +82,7 @@ app.use('/delete', (req, res) => {
 
 
 // endpoint for accessing data via the web api
-// to use this, make a request for /api to get an array of all Person objects
+// to use this, make a request for /api to get an array of all Scholarship objects
 // or /api?name=[whatever] to get a single object
 app.use('/api', (req, res) => {
 
@@ -93,26 +93,26 @@ app.use('/api', (req, res) => {
 	    queryObject = { "name" : req.query.name };
 	}
     
-	Person.find( queryObject, (err, persons) => {
-		console.log(persons);
+	Scholarship.find( queryObject, (err, scholarships) => {
+		console.log(scholarships);
 		if (err) {
 		    console.log('uh oh' + err);
 		    res.json({});
 		}
-		else if (persons.length == 0) {
+		else if (scholarships.length == 0) {
 		    // no objects found, so send back empty json
 		    res.json({});
 		}
-		else if (persons.length == 1 ) {
-		    var person = persons[0];
+		else if (scholarships.length == 1 ) {
+		    var scholarship = scholarships[0];
 		    // send back a single JSON object
-		    res.json( { "name" : person.name , "age" : person.age } );
+		    res.json( { "name" : scholarship.name , "age" : scholarship.age } );
 		}
 		else {
 		    // construct an array out of the result
 		    var returnArray = [];
-		    persons.forEach( (person) => {
-			    returnArray.push( { "name" : person.name, "age" : person.age } );
+		    scholarships.forEach( (scholarship) => {
+			    returnArray.push( { "name" : scholarship.name, "age" : scholarship.age } );
 			});
 		    // send it back as JSON Array
 		    res.json(returnArray); 
@@ -128,7 +128,7 @@ app.use('/api', (req, res) => {
 
 app.use('/public', express.static('public'));
 
-app.use('/', (req, res) => { res.redirect('/public/personform.html'); } );
+app.use('/', (req, res) => { res.redirect('/public/scholarshipform.html'); } );
 
 app.listen(3000,  () => {
 	console.log('Listening on port 3000');
