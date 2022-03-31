@@ -8,5 +8,5 @@ Iryna, Keeton, Will and Will's project for CMSC B353 - Software Engineering
 2. Start the database. For example: `myMongoInstallation/bin/mongod --dbpath swe-project-team-3/db`
 3. Make sure nodemon is installed globally: `npm install -g nodemon`
 4. Install dependencies: `npm install`
-5. Start the express server: `nodemon index.js`
+5. Start the express server: `npm run start` or `nodemon index.js`
 6. Go to http://localhost:3000
