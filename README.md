@@ -10,5 +10,3 @@ Iryna, Keeton, Will and Will's project for CMSC B353 - Software Engineering
 4. Install dependencies: `npm install`
 5. Start the express server: `npm run start` or `nodemon index.js`
 6. Go to http://localhost:3000
-
-Will :)
