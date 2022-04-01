@@ -17,7 +17,12 @@ app.use('/create', (req, res) => {
 	// construct the scholarship from the form data which is in the request body
 	var newScholarship = new Scholarship ({
 		name: req.body.name,
-		age: req.body.age,
+		org: req.body.org,
+		description: req.body.description,
+		dollarAmount: req.body.dollarAmount,
+		approvalStatus: req.body.approvalStatus,
+		dueDate: req.body.dueDate,
+		gpaRequirement: req.body.gpaRequirement,
 	    });
 
 	// save the scholarship to the database
@@ -36,7 +41,7 @@ app.use('/create', (req, res) => {
     }
     );
 
-// endpoint for showing all the people
+// endpoint for showing all the scholarships
 app.use('/all', (req, res) => {
     
 	// find all the scholarship objects in the database
@@ -49,18 +54,18 @@ app.use('/all', (req, res) => {
 		else {
 		    if (scholarships.length == 0) {
 			res.type('html').status(200);
-			res.write('There are no people');
+			res.write('There are no scholarships');
 			res.end();
 			return;
 		    }
 		    else {
 			res.type('html').status(200);
-			res.write('Here are the people in the database:');
+			res.write('Here are the scholarships in the database:');
 			res.write('<ul>');
-			// show all the people
+			// show all the scholarships
 			scholarships.forEach( (scholarship) => {
 			    res.write('<li>');
-			    res.write('Name: ' + scholarship.name + '; age: ' + scholarship.age);
+			    res.write('Name: ' + scholarship.name + '; Org: ' + scholarship.org + '; $ Amount: ' + scholarship.dollarAmount + '; Due Date: ' + scholarship.dueDate);
 			    // this creates a link to the /delete endpoint
 			    res.write(" <a href=\"/delete?name=" + scholarship.name + "\">[Delete]</a>");
 			    res.write('</li>');
