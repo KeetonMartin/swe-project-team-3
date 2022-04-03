@@ -43,7 +43,12 @@ app.use('/create', (req, res) => {
 
 // endpoint for showing all the scholarships
 app.use('/all', (req, res) => {
-    
+
+	// res.redirect('/public/tableOfData.html');
+
+	// /*
+
+
 	// find all the scholarship objects in the database
 	Scholarship.find( {}, (err, scholarships) => {
 		if (err) {
@@ -76,15 +81,16 @@ app.use('/all', (req, res) => {
 		    }
 		}
 	    }).sort({ 'age': 'asc' }); // this sorts them BEFORE rendering the results
-});
+
+	// */
+
+	});
 
 
 // IMPLEMENT THIS ENDPOINT!
 app.use('/delete', (req, res) => {
     res.redirect('/all');
 });
-
-
 
 // endpoint for accessing data via the web api
 // to use this, make a request for /api to get an array of all Scholarship objects
