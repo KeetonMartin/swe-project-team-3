@@ -20,7 +20,7 @@ app.use('/create', (req, res) => {
 		org: req.body.org,
 		description: req.body.description,
 		dollarAmount: req.body.dollarAmount,
-		approvalStatus: req.body.approvalStatus,
+		approvalStatus: (req.body.approvalStatus=="1" ? true : false),
 		dueDate: req.body.dueDate,
 		gpaRequirement: req.body.gpaRequirement,
 	    });
@@ -39,15 +39,48 @@ app.use('/create', (req, res) => {
 		}
 	    } ); 
     }
-    );
+);
+
+app.use('/edit', (req, res) => {
+	res.redirect('/public/edit.html', {_id : req.query._id}); 
+});
+// endpoint for editing an existing scholarship
+// this is the action of the "edit scholarship" form
+
+
+app.use('/update', (req, res) => {
+	// construct the scholarship from the form data which is in the request body
+	var filter = { '_id' : req.query._id };
+	var action = { '$set' : { 
+		name: (req.query.name ? req.query.name : req.body.name),
+		org: (req.query.org ? req.query.org : req.body.org),
+		description: (req.query.description ? req.query.description : req.body.description),
+		dollarAmount: (req.query.dollarAmount ? req.query.dollarAmount : req.body.dollarAmount),
+		approvalStatus: (req.query.approvalStatus ? req.query.approvalStatus : req.body.approvalStatus),
+		dueDate: (req.query.dueDate ? req.query.dueDate : req.body.dueDate),
+		gpaRequirement: (req.query.gpaRequirement ? req.query.gpaRequirement : req.body.gpaRequirement),
+	} };
+
+	
+	Scholarship.findOneAndUpdate( filter, action, (err, orig) => {
+		if (err) { 
+		   res.json( { 'status' : err } ); 
+		}
+		else if (!orig) {
+		   res.json( { 'status' : 'scholarship not found' } ); 
+		}
+		else {
+		   res.json( { 'status' : 'success' } ); 
+		}
+	});
+ 
+    }
+);
 
 // endpoint for showing all the scholarships
 app.use('/all', (req, res) => {
 
 	// res.redirect('/public/tableOfData.html');
-
-	// /*
-
 
 	// find all the scholarship objects in the database
 	Scholarship.find( {}, (err, scholarships) => {
@@ -70,9 +103,11 @@ app.use('/all', (req, res) => {
 			// show all the scholarships
 			scholarships.forEach( (scholarship) => {
 			    res.write('<li>');
-			    res.write('Name: ' + scholarship.name + '; Org: ' + scholarship.org + '; $ Amount: ' + scholarship.dollarAmount + '; Due Date: ' + scholarship.dueDate);
+			    res.write('Name: ' + scholarship.name + '; org: ' + scholarship.org);
 			    // this creates a link to the /delete endpoint
 			    res.write(" <a href=\"/delete?name=" + scholarship.name + "\">[Delete]</a>");
+			    res.write(" <a href=\"/edit?_id=" + scholarship._id + "\">[Edit]</a>");
+
 			    res.write('</li>');
 					 
 			});
@@ -81,8 +116,6 @@ app.use('/all', (req, res) => {
 		    }
 		}
 	    }).sort({ 'age': 'asc' }); // this sorts them BEFORE rendering the results
-
-	// */
 
 	});
 
@@ -139,7 +172,9 @@ app.use('/api', (req, res) => {
 
 app.use('/public', express.static('public'));
 
-app.use('/', (req, res) => { res.redirect('/public/scholarshipform.html'); } );
+app.use('/', (req, res) => { res.redirect('/public/create.html'); } );
+
+
 
 app.listen(3000,  () => {
 	console.log('Listening on port 3000');
