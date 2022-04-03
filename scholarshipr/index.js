@@ -82,9 +82,6 @@ app.use('/all', (req, res) => {
 
 	// res.redirect('/public/tableOfData.html');
 
-	// /*
-
-
 	// find all the scholarship objects in the database
 	Scholarship.find( {}, (err, scholarships) => {
 		if (err) {
@@ -119,8 +116,6 @@ app.use('/all', (req, res) => {
 		    }
 		}
 	    }).sort({ 'age': 'asc' }); // this sorts them BEFORE rendering the results
-
-	// */
 
 	});
 
