@@ -165,9 +165,6 @@ app.use('/api', (req, res) => {
 	    });
     });
 
-
-nsoatheusnaotehusnatoheu
-
 /*************************************************/
 
 app.use('/public', express.static('public'));
