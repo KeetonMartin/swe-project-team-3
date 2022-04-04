@@ -15,7 +15,7 @@ var Scholarship = require('./Scholarship.js');
 // this is the action of the "create new scholarship" form
 app.use('/create', (req, res) => {
 
-	if (req.body.name ) {
+	if (!req.body.name ) {
 		res.redirect('/');
 	}
 
@@ -40,7 +40,10 @@ app.use('/create', (req, res) => {
 		}
 		else {
 			// display the "successfull created" message
-			res.send('successfully added ' + newScholarship.name + ' to the database');
+			res.type('html').status(200);
+			res.write('successfully added ' + newScholarship.name + ' to the database');
+			res.write("<a href=\"/viewDetail?_id=" + newScholarship._id + "\">[See Completed Entry]</a>")
+			res.end();
 		}
 	});
 }
@@ -92,7 +95,7 @@ app.use('/all', (req, res) => {
 
 	// starterTemplate = '<htmllang=\"en\">	<head>	<!--Requiredmetatags-->	<metacharset=\"utf-8\">	<metaname=\"viewport\"content=\"width=device-width,initial-scale=1,shrink-to-fit=no\">	<!--BootstrapCSS-->	<linkrel=\"stylesheet\"href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\"integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\"crossorigin=\"anonymous\">	<title>Hello,world!</title>	</head>	<body>'
 
-	res.write("<nav class=\"navbar navbar-dark bg-dark\">  <div class=\"container-fluid\">    <div class=\"navbar-header\">      <a class=\"navbar-brand\" href=\"/\">Scholarshipr</a>    </div>    <ul class=\"nav navbar-nav\">      <li class=\"active\"><a href=\"/\">Home</a></li><li><a href=\"/create\">Create</a></li><li><a href=\"/all\">All</a></li>      <li><a href=\"#\">Page 3</a></li>    </ul>  </div></nav>")
+	res.write("<nav class=\"navbar navbar-dark bg-dark\">  <div class=\"container-fluid\">    <div class=\"navbar-header\">      <a class=\"navbar-brand\" href=\"/\">Scholarshipr</a>    </div>    <ul class=\"nav navbar-nav\">      <li class=\"active\"><a href=\"/\">Home</a></li><li><a href=\"/\">Create</a></li><li><a href=\"/all\">All</a></li>      <li><a href=\"#\">Page 3</a></li>    </ul>  </div></nav>")
 	res.write("<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\">");
 	// res.write(starterTemplate)
 
@@ -129,7 +132,7 @@ app.use('/all', (req, res) => {
 					res.write('<td>' + scholarship.dollarAmount + '</td>')
 					res.write('<td>' + scholarship.dueDate + '</td>')
 					res.write("<td>" +
-						" <a href=\"/delete?name=" + scholarship.name + "\">[Delete]</a>" +
+						" <a href=\"/delete?_id=" + scholarship._id + "\">[Delete]</a>" +
 						"</td>"
 					)
 					res.write("<td>" +
