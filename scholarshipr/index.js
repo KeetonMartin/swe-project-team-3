@@ -161,7 +161,29 @@ app.use('/viewDetail', (req, res) => {
 
 // IMPLEMENT THIS ENDPOINT!
 app.use('/delete', (req, res) => {
-	res.redirect('/all');
+	if (!req.query._id) {
+		console.log('uh oh, no id in the query parameters')
+		return res.type('html').write('uh oh, no id in the query parameters')
+	} else {
+		const id = req.query._id
+		console.log(`Trying to delete scholarship: ${id}`)
+		Scholarship.findOneAndDelete({'_id':id}, (err, scholarship) => {
+			if (err) {
+				console.log("Unexpected error")
+				return res.type('html').write("Unexpected error")
+			}
+			else if (!scholarship) {
+				// A strange error I can't debug happens here. Recreate by
+				// visiting http://localhost:3000/delete?_id=5
+				console.log(`Could not find scholarship with id ${id}`)
+				return res.type('html').write(`Could not find scholarship with id ${id}`)
+			}
+			else {
+				console.log(`Deleted scholarship with id ${scholarship._id}`)
+			}
+		});
+	}
+    res.redirect(302, '/all');
 });
 
 // endpoint for accessing data via the web api
@@ -203,9 +225,6 @@ app.use('/api', (req, res) => {
 
 	});
 });
-
-
-
 
 /*************************************************/
 
