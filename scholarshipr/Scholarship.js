@@ -12,7 +12,7 @@ var scholarshipSchema = new Schema({
     description: {type: String, required: false, unique: false},
     dollarAmount: {type: Number, required: false, unique: false},
     // gender: {type: Enumerator, required: false, unique: false},
-    approvalStatus: {type: Boolean, required: true, unique: false},
+    approvalStatus: {type: String, required: true, unique: false},
     // race: {type: Enumerator, required: false, unique: false},
     // nationality: {type: Enumerator, required: false, unique: false},
     // athleticOrAcademic: {type: Enumerator, required: false, unique: false},
