@@ -42,7 +42,9 @@ app.use('/create', (req, res) => {
 );
 
 app.use('/edit', (req, res) => {
-	res.redirect('/public/edit.html', {_id : req.query._id}); 
+	console.log(req.query._id);
+	res.redirect('/public/edit.html', {_id : req.query._id});
+	// res.redirect('/public/edit.html?_id=' + req, {_id : req.query._id}); 
 });
 // endpoint for editing an existing scholarship
 // this is the action of the "edit scholarship" form
