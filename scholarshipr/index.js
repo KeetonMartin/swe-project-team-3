@@ -1,7 +1,8 @@
 // set up Express
 var express = require('express');
 var app = express();
-
+app.set('view engine', 'ejs');
+app.set('views', './public')
 // set up BodyParser
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -49,9 +50,23 @@ app.use('/create', (req, res) => {
 }
 );
 
+
 app.use('/edit', (req, res) => {
-	res.redirect('/public/edit.html', { _id: req.query._id });
-});
+	var query = {"_id" : req.query._id };
+	Scholarship.findOne( query, (err, result) => {
+		if (err) {
+		    res.render("error", {'error' : err});
+		}
+		else {
+		    // this uses EJS to render the views/editForm.ejs template	
+		    res.render("edit", {"scholarship" : result});
+		}
+	    });
+    });
+
+// app.use('/edit', (req, res) => {
+// 	res.redirect('/public/edit.html', { _id: req.query._id });
+// });
 // endpoint for editing an existing scholarship
 // this is the action of the "edit scholarship" form
 
