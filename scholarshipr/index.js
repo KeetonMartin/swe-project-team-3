@@ -4,6 +4,8 @@ var app = express();
 const url = require('url');    
 
 
+app.set('view engine', 'ejs');
+app.set('views', './public')
 // set up BodyParser
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -51,11 +53,23 @@ app.use('/create', (req, res) => {
 }
 );
 
+
 app.use('/edit', (req, res) => {
-	console.log(req.query._id);
-	res.redirect('/public/edit.html', {_id : req.query._id});
-	// res.redirect('/public/edit.html?_id=' + req, {_id : req.query._id}); 
-});
+	var query = {"_id" : req.query._id };
+	Scholarship.findOne( query, (err, result) => {
+		if (err) {
+		    res.render("error", {'error' : err});
+		}
+		else {
+		    // this uses EJS to render the views/editForm.ejs template	
+		    res.render("edit", {"scholarship" : result});
+		}
+	    });
+    });
+
+// app.use('/edit', (req, res) => {
+// 	res.redirect('/public/edit.html', { _id: req.query._id });
+// });
 // endpoint for editing an existing scholarship
 // this is the action of the "edit scholarship" form
 
@@ -99,7 +113,7 @@ app.use('/all', (req, res) => {
 
 	// starterTemplate = '<htmllang=\"en\">	<head>	<!--Requiredmetatags-->	<metacharset=\"utf-8\">	<metaname=\"viewport\"content=\"width=device-width,initial-scale=1,shrink-to-fit=no\">	<!--BootstrapCSS-->	<linkrel=\"stylesheet\"href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\"integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\"crossorigin=\"anonymous\">	<title>Hello,world!</title>	</head>	<body>'
 
-	res.write("<nav class=\"navbar navbar-dark bg-dark\">  <div class=\"container-fluid\">    <div class=\"navbar-header\">      <a class=\"navbar-brand\" href=\"/\">Scholarshipr</a>    </div>    <ul class=\"nav navbar-nav\">      <li class=\"active\"><a href=\"/\">Home</a></li><li><a href=\"/\">Create</a></li><li><a href=\"/all\">All</a></li>      <li><a href=\"#\">Page 3</a></li>    </ul>  </div></nav>")
+	res.write("<nav class=\"navbar navbar-expand-lg navbar-dark bg-dark\">    <a class=\"navbar-brand\" href=\"/\">Scholarshipr</a>    <button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarNavAltMarkup\" aria-controls=\"navbarNavAltMarkup\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">      <span class=\"navbar-toggler-icon\"></span>    </button>    <div class=\"collapse navbar-collapse\" id=\"navbarNavAltMarkup\">      <div class=\"navbar-nav\">        <a class=\"nav-item nav-link\" href=\"/all\">All</a>        <a class=\"nav-item nav-link\" href=\"/public/create.html\">Add</a>        <a class=\"nav-item nav-link\" href=\"#\">Suggested</a>      </div>    </div>  </nav>")
 	res.write("<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\">");
 	// res.write(starterTemplate)
 
@@ -134,7 +148,11 @@ app.use('/all', (req, res) => {
 					res.write('<td>' + scholarship.name + '</td>')
 					res.write('<td>' + scholarship.org + '</td>')
 					res.write('<td>' + scholarship.dollarAmount + '</td>')
-					res.write('<td>' + scholarship.dueDate.toDateString() + '</td>')
+					if (scholarship.dueDate) {
+						res.write('<td>' + scholarship.dueDate.toDateString() + '</td>')
+					} else {
+						res.write('<td>' + 'Unknown' + '</td>')
+					}
 					res.write("<td>" +
 						" <a class=\"btn btn-danger btn-sm\" href=\"/delete?_id=" + scholarship._id + "\">Delete</a>" +
 						"</td>"
@@ -225,7 +243,13 @@ function getCardHTML(scholarship) {
 	returnableString += "</li>    <li class=\"list-group-item\">";
 	returnableString += "Approval Status: " + approvalEmoji;
 	returnableString += "</li>    <li class=\"list-group-item\">";
-	returnableString += "Due Date: " + dueDate.toDateString();
+
+	if (scholarship.dueDate) {
+		returnableString += "Due Date: " + dueDate.toDateString();
+	} else {
+		returnableString += "Due Date: " + "unknown";
+	}
+
 	returnableString += "</li>    <li class=\"list-group-item\">";
 	returnableString += "GPA Requirement: " + gpaRequirement;
 	returnableString += "</li>    <li class=\"list-group-item\">";
