@@ -201,7 +201,7 @@ app.use('/viewDetail', (req, res) => {
 
 				// starterTemplate = '<htmllang=\"en\">	<head>	<!--Requiredmetatags-->	<metacharset=\"utf-8\">	<metaname=\"viewport\"content=\"width=device-width,initial-scale=1,shrink-to-fit=no\">	<!--BootstrapCSS-->	<linkrel=\"stylesheet\"href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\"integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\"crossorigin=\"anonymous\">	<title>Hello,world!</title>	</head>	<body>'
 			
-				res.write("<nav class=\"navbar navbar-dark bg-dark\">  <div class=\"container-fluid\">    <div class=\"navbar-header\">      <a class=\"navbar-brand\" href=\"/\">Scholarshipr</a>    </div>    <ul class=\"nav navbar-nav\">      <li class=\"active\"><a href=\"/\">Home</a></li><li><a href=\"/\">Create</a></li><li><a href=\"/all\">All</a></li>      <li><a href=\"#\">Page 3</a></li>    </ul>  </div></nav>")
+				res.write("<nav class=\"navbar navbar-expand-lg navbar-dark bg-dark\">    <a class=\"navbar-brand\" href=\"/\">Scholarshipr</a>    <button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarNavAltMarkup\" aria-controls=\"navbarNavAltMarkup\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">      <span class=\"navbar-toggler-icon\"></span>    </button>    <div class=\"collapse navbar-collapse\" id=\"navbarNavAltMarkup\">      <div class=\"navbar-nav\">        <a class=\"nav-item nav-link\" href=\"/all\">All</a>        <a class=\"nav-item nav-link\" href=\"/public/create.html\">Add</a>        <a class=\"nav-item nav-link\" href=\"#\">Suggested</a>      </div>    </div>  </nav>")
 				res.write("<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\">");			
 				// res.write('<h3>Here is a specific scholarship</h3>');
 
@@ -220,7 +220,6 @@ function getCardHTML(scholarship) {
 	let approvalStatus = scholarship.approvalStatus;
 	let dueDate = scholarship.dueDate;
 	let gpaRequirement = scholarship.gpaRequirement;
-
 
 	approvalEmoji = "❓"
 	if (approvalStatus == true) {
