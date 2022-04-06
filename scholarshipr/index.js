@@ -1,6 +1,8 @@
 // set up Express
 var express = require('express');
 var app = express();
+const url = require('url');    
+
 
 // set up BodyParser
 var bodyParser = require('body-parser');
@@ -132,7 +134,7 @@ app.use('/all', (req, res) => {
 					res.write('<td>' + scholarship.name + '</td>')
 					res.write('<td>' + scholarship.org + '</td>')
 					res.write('<td>' + scholarship.dollarAmount + '</td>')
-					res.write('<td>' + scholarship.dueDate + '</td>')
+					res.write('<td>' + scholarship.dueDate.toDateString() + '</td>')
 					res.write("<td>" +
 						" <a href=\"/delete?_id=" + scholarship._id + "\">[Delete]</a>" +
 						"</td>"
@@ -160,9 +162,82 @@ app.use('/all', (req, res) => {
 });
 
 app.use('/viewDetail', (req, res) => {
-	res.redirect('/all');
-});
+	if (!req.query._id) {
+		console.log('uh oh, no id in the query parameters')
+		return res.type('html').write('uh oh, no id in the query parameters')
+	} else {
+		const id = req.query._id
+		console.log(`Trying to find scholarship: ${id}`)
+		Scholarship.findOne({'_id':id}, (err, scholarship) => {
+			if (err) {
+				console.log("Unexpected error")
+				return res.type('html').write("Unexpected error")
+			}
+			else if (!scholarship) {
+				// A strange error I can't debug happens here. Recreate by
+				// visiting http://localhost:3000/delete?_id=5
+				console.log(`Could not find scholarship with id ${id}`)
+				return res.type('html').write(`Could not find scholarship with id ${id}`)
+			}
+			else {
+				console.log(`Found scholarship with id ${scholarship._id}`)
+				res.type('html').status(200);
 
+				// starterTemplate = '<htmllang=\"en\">	<head>	<!--Requiredmetatags-->	<metacharset=\"utf-8\">	<metaname=\"viewport\"content=\"width=device-width,initial-scale=1,shrink-to-fit=no\">	<!--BootstrapCSS-->	<linkrel=\"stylesheet\"href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\"integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\"crossorigin=\"anonymous\">	<title>Hello,world!</title>	</head>	<body>'
+			
+				res.write("<nav class=\"navbar navbar-dark bg-dark\">  <div class=\"container-fluid\">    <div class=\"navbar-header\">      <a class=\"navbar-brand\" href=\"/\">Scholarshipr</a>    </div>    <ul class=\"nav navbar-nav\">      <li class=\"active\"><a href=\"/\">Home</a></li><li><a href=\"/\">Create</a></li><li><a href=\"/all\">All</a></li>      <li><a href=\"#\">Page 3</a></li>    </ul>  </div></nav>")
+				res.write("<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\">");			
+				// res.write('<h3>Here is a specific scholarship</h3>');
+
+				res.write(getCardHTML(scholarship));
+			}
+		});
+	}
+ });
+
+function getCardHTML(scholarship) {
+
+	let name = scholarship.name;
+	let description = scholarship.description;
+	let org = scholarship.org;
+	let dollarAmount = scholarship.dollarAmount;
+	let approvalStatus = scholarship.approvalStatus;
+	let dueDate = scholarship.dueDate;
+	let gpaRequirement = scholarship.gpaRequirement;
+
+
+	approvalEmoji = "❓"
+	if (approvalStatus == true) {
+		approvalEmoji = "✅";
+	} else if (approvalStatus == false) {
+		approvalStatus = "❌";
+	}
+
+	let returnableString = "<div class=\"col d-flex justify-content-center\">";
+	returnableString += "<div class=\"card\" style=\"width: 18rem;\"> <div class=\"card-body\">    <h5 class=\"card-title\">";
+	returnableString += name;
+	returnableString += "</h5>    <p class=\"card-text\">";
+	returnableString += description;
+	returnableString += "</p>  </div>  <ul class=\"list-group list-group-flush\">    <li class=\"list-group-item\">";
+	returnableString += "Org: " + org;
+	returnableString += "</li>    <li class=\"list-group-item\">";
+	returnableString += "Dollar Amount: " + dollarAmount;
+	returnableString += "</li>    <li class=\"list-group-item\">";
+	returnableString += "Approval Status: " + approvalEmoji;
+	returnableString += "</li>    <li class=\"list-group-item\">";
+	returnableString += "Due Date: " + dueDate.toDateString();
+	returnableString += "</li>    <li class=\"list-group-item\">";
+	returnableString += "GPA Requirement: " + gpaRequirement;
+	returnableString += "</li>    <li class=\"list-group-item\">";
+
+
+	returnableString += "</li>  </ul>  <div class=\"mx-auto\"><div class=\"card-body\">";
+	returnableString += "<a href=\"/edit?_id=" + scholarship._id + "\">[Edit]</a>";
+	returnableString += "<a href=\"/delete?_id=" + scholarship._id + "\">[Delete]</a>"; 
+	returnableString += "</div></div></div></div>";
+
+	return returnableString;
+}
 
 // IMPLEMENT THIS ENDPOINT!
 app.use('/delete', (req, res) => {
