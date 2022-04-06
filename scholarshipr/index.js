@@ -222,9 +222,9 @@ function getCardHTML(scholarship) {
 	let gpaRequirement = scholarship.gpaRequirement;
 
 	approvalEmoji = "❓"
-	if (approvalStatus == true) {
+	if (approvalStatus == "true") {
 		approvalEmoji = "✅";
-	} else if (approvalStatus == false) {
+	} else if (approvalStatus == "false") {
 		approvalStatus = "❌";
 	}
 
