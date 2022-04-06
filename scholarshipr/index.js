@@ -136,15 +136,15 @@ app.use('/all', (req, res) => {
 					res.write('<td>' + scholarship.dollarAmount + '</td>')
 					res.write('<td>' + scholarship.dueDate.toDateString() + '</td>')
 					res.write("<td>" +
-						" <a href=\"/delete?_id=" + scholarship._id + "\">[Delete]</a>" +
+						" <a class=\"btn btn-danger btn-sm\" href=\"/delete?_id=" + scholarship._id + "\">Delete</a>" +
 						"</td>"
 					)
 					res.write("<td>" +
-						" <a href=\"/edit?_id=" + scholarship._id + "\">[Edit]</a>" +
+						" <a class=\"btn btn-warning btn-sm\" href=\"/edit?_id=" + scholarship._id + "\">Edit</a>" +
 						"</td>"
 					)
 					res.write("<td>" +
-					" <a href=\"/viewDetail?_id=" + scholarship._id + "\">[ViewDetail]</a>" +
+					" <a class=\"btn btn-info btn-sm\" href=\"/viewDetail?_id=" + scholarship._id + "\">ViewDetail</a>" +
 					"</td>"
 					)
 
@@ -230,10 +230,10 @@ function getCardHTML(scholarship) {
 	returnableString += "GPA Requirement: " + gpaRequirement;
 	returnableString += "</li>    <li class=\"list-group-item\">";
 
-
 	returnableString += "</li>  </ul>  <div class=\"mx-auto\"><div class=\"card-body\">";
-	returnableString += "<a href=\"/edit?_id=" + scholarship._id + "\">[Edit]</a>";
-	returnableString += "<a href=\"/delete?_id=" + scholarship._id + "\">[Delete]</a>"; 
+	returnableString += "<a class=\"btn btn-warning btn-sm mr-1\" href=\"/edit?_id=" + scholarship._id + "\">Edit</a>";
+	// returnableString += "<br/>"
+	returnableString += "<a class=\"btn btn-danger btn-sm ml-1\" href=\"/delete?_id=" + scholarship._id + "\">Delete</a>"; 
 	returnableString += "</div></div></div></div>";
 
 	return returnableString;
