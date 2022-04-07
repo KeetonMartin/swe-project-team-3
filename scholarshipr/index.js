@@ -153,17 +153,17 @@ app.use('/all', (req, res) => {
 					} else {
 						res.write('<td>' + 'Unknown' + '</td>')
 					}
-					res.write("<td>" +
-						" <a class=\"btn btn-danger btn-sm\" href=\"/delete?_id=" + scholarship._id + "\">Delete</a>" +
-						"</td>"
+					res.write('<td>' + // TODO put a popup
+						` <a class="btn btn-danger btn-sm" href="#" onclick="if (confirm('Delete scholarship &quot;` + scholarship.name + `&quot;?')) { window.location = '/delete?_id=` + scholarship.id + `' }">Delete</a>` +
+						'</td>'
 					)
 					res.write("<td>" +
-						" <a class=\"btn btn-warning btn-sm\" href=\"/edit?_id=" + scholarship._id + "\">Edit</a>" +
-						"</td>"
+						' <a class="btn btn-warning btn-sm" href="/edit?_id=' + scholarship._id + '\>Edit</a>' +
+						'</td>'
 					)
 					res.write("<td>" +
-					" <a class=\"btn btn-info btn-sm\" href=\"/viewDetail?_id=" + scholarship._id + "\">ViewDetail</a>" +
-					"</td>"
+					' <a class="btn btn-info btn-sm" href="/viewDetail?_id=' + scholarship._id + '">ViewDetail</a>' +
+					'</td>'
 					)
 
 					res.write('</tr>');
