@@ -29,6 +29,10 @@ public class ScholarshipData extends AppCompatActivity {
         this.id = id;
     }
 
+    public ScholarshipData(String name){
+        this.name = name;
+    }
+
     public String getName(){
         return name;
     }

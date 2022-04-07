@@ -7,10 +7,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.SearchView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import androidx.appcompat.app.AppCompatActivity;
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView rvScholarships;
     protected List<ScholarshipData> allScholarships;
     protected SearchView searchView;
+    protected ScholarshipAdapter scholarshipAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,12 +48,35 @@ public class MainActivity extends AppCompatActivity {
         allScholarships = new ArrayList<>();
         swipeContainer = findViewById(R.id.swipeContainer);
         rvScholarships.setLayoutManager(new LinearLayoutManager(this));
-
+        // Initialize an adapter
+        scholarshipAdapter = new ScholarshipAdapter(this, allScholarships);
+        // Set the adapter on the recycler view
+        rvScholarships.setAdapter(scholarshipAdapter);
+        // Set a layout manager on the recycler view
+        rvScholarships.setLayoutManager(new LinearLayoutManager(this));
+        getAllScholarships();
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Log.i(TAG, "Refreshing scholarships...");
+                // Clear out old items before appending in the new ones
+                scholarshipAdapter.clear();
+                // Get and add new items to adapter
+                getAllScholarships();
+                // Now we call setRefreshing(false) to signal refresh has finished
+                swipeContainer.setRefreshing(false);
+            }
+        });
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(android.R.color.holo_blue_bright,
+                android.R.color.holo_green_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
 
     }
 
-    public List<ScholarshipData> getAllScholarships() {
-        TextView tv = findViewById(R.id.statusField);
+    public void getAllScholarships() {
+        //TextView tv = findViewById(R.id.statusField);
 
         try {
             ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -60,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                             // and that it has a /test endpoint that returns a JSON object with
                             // a field called "message"
 
-                            URL url = new URL("http://10.0.2.2:3000/test");
+                            URL url = new URL("http://localhost:3000/all");
 
                             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                             conn.setRequestMethod("GET");
@@ -68,15 +94,33 @@ public class MainActivity extends AppCompatActivity {
 
                             Scanner in = new Scanner(url.openStream());
                             String response = in.nextLine();
+                            String name;
+                            JSONObject jso = new JSONObject(response);
+                            Iterator<String> keys = (Iterator<String>) jso.keys();
+                            while (keys.hasNext()) {
+                                String key = keys.next();
+                                JSONObject value = jso.getJSONObject(key);
+                                name = value.getString("name");
+                                ScholarshipData scholarship = new ScholarshipData(name);
+                                allScholarships.add(scholarship);
+                                scholarshipAdapter.notifyDataSetChanged();
 
-                            JSONObject jo = new JSONObject(response);
+                            }
+                            //String org;
+                            //int amount;
+                            //String date;
+
+
 
                             // need to set the instance variable in the Activity object
                             // because we cannot directly access the TextView from here
-                            message = jo.getString("message");
+
+                            /*amount = jo.getInt("Dollar Amount");
+                            date = jo.getString("Due Date");
+                            org = jo.getString("Organization");*/
 
                         } catch (Exception e) {
-                            message = e.toString();
+                            e.toString();
                         }
                     }
             );
@@ -87,11 +131,10 @@ public class MainActivity extends AppCompatActivity {
             executor.awaitTermination(2, TimeUnit.SECONDS);
 
             // now we can set the status in the TextView
-            tv.setText(message);
+            //tv.setText(message);
         } catch (Exception e) {
             // uh oh
             e.printStackTrace();
-            tv.setText(e.toString());
         }
     }
 }
