@@ -85,8 +85,8 @@ public class ScholarshipAdapter extends RecyclerView.Adapter<ScholarshipAdapter.
 
         public void bind(ScholarshipData scholarship) {
             // Bind the contact name to the view element
-            tvScholarshipName.setText(scholarship.getScholarshipName());
-            tvScholarshipInfo.setText(scholarship.getScholarshipDescrip());
+            tvScholarshipName.setText(scholarship.getName());
+            tvScholarshipInfo.setText(scholarship.getDescription());
 
             /*
             Use Glide to load an image into the ImageView
