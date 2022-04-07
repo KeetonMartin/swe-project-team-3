@@ -1,24 +1,40 @@
 <html>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <a class="navbar-brand" href="/">Scholarshipr</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link" href="/all">All</a>
+        <a class="nav-item nav-link active" href="/public/create.html">Add</a>
+        <a class="nav-item nav-link" href="#">Suggested</a>
+      </div>
+    </div>
+  </nav>
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 <h3>Add new scholarship:</h3>
 <form action="/create" method="post">
-
-Name: <input name="name"> <br/>
-
-Organization: <input name="org"> <br/>
-
-Description: <input name="description"> <br/>
-
-Award amount: <input name="dollarAmount" type="number" > <br/>
-
-Approval status: <input name="approvalStatus" id="approvalStatus" value="1" type="checkbox" checked> <br/>
-
-Due date: <input name="dueDate" type="date"> <br/>
-
-GPA requirement: <input name="gpaRequirement" type="number" step="0.01" min="0" max="4"> <br/>
-
-
-<input type="submit" value="Add scholarship!">
-
+    
+    Name: <input name="name"> <br/>
+    
+    Organization: <input name="org"> <br/>
+    
+    Description: <input name="description"> <br/>
+    
+    Award amount: <input name="dollarAmount" type="number" > <br/>
+    
+    Approval status: <input name="approvalStatus" id="approvalStatus" value="1" type="checkbox" checked> <br/>
+    
+    Due date: <input name="dueDate" type="date"> <br/>
+    
+    GPA requirement: <input name="gpaRequirement" type="number" step="0.01" min="0" max="4"> <br/>
+    
+    
+    <input type="submit" value="Add scholarship!">
+    
 </form>
 
 </html>
