@@ -86,16 +86,24 @@ public class MainActivity extends AppCompatActivity {
                             // and that it has a /test endpoint that returns a JSON object with
                             // a field called "message"
 
-                            URL url = new URL("http://localhost:3000/all");
+                            URL url = new URL("http://10.0.2.2:3000/api");
+
+                            Log.v("debug", "Trying to make a connection to " + url);
 
                             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                             conn.setRequestMethod("GET");
                             conn.connect();
 
+                            Log.v("debug", "We connected. Connection: " + conn);
+
+
                             Scanner in = new Scanner(url.openStream());
                             String response = in.nextLine();
                             String name;
                             JSONObject jso = new JSONObject(response);
+
+                            Log.v("debug", "Here's the JSON we got: " + jso);
+
                             Iterator<String> keys = (Iterator<String>) jso.keys();
                             while (keys.hasNext()) {
                                 String key = keys.next();
