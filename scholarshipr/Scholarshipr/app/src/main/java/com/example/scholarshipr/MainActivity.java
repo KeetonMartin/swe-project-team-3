@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                             // and that it has a /test endpoint that returns a JSON object with
                             // a field called "message"
 
-                            URL url = new URL("http://localhost:3000/all");
+                            URL url = new URL("http://localhost:3000/api");
 
                             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                             conn.setRequestMethod("GET");
