@@ -24,7 +24,7 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnAdd"
+        android:id="@+id/btnAddScholarship"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
@@ -34,5 +34,6 @@
         app:fabSize="normal"
         app:layout_anchor="@id/rvScholarships"
         app:layout_anchorGravity="bottom|right|end"
-        app:tint="@color/white" />
+        app:tint="@color/white"
+        android:onClick="onAddScholarshipButtonClick"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

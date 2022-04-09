@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Scholarshipr">
         <activity
-            android:name=".AddScholarship"
+            android:name=".AddScholarshipActivity"
             android:exported="false"
             android:label="@string/title_activity_add_scholarship"
             android:theme="@style/Theme.Scholarshipr.NoActionBar" />

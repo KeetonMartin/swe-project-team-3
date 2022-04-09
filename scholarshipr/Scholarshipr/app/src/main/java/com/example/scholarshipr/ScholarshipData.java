@@ -1,5 +1,10 @@
 package com.example.scholarshipr;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.time.ZonedDateTime;
@@ -14,6 +19,12 @@ public class ScholarshipData extends AppCompatActivity {
     public static ZonedDateTime dueDate;
     public static Float gpaRequirement;
     public static String id;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_scholarshipdata);
+    }
 
     // Constructor for a ScholarshipData
     public ScholarshipData(String name, String org, String description, int amount,
@@ -83,4 +94,12 @@ public class ScholarshipData extends AppCompatActivity {
         this.id = id;
     }
 
+    public static final int ADD_SCHOLARSHIP_ACTIVITY_ID = 1;
+
+    public void onAddScholarshipButtonClick(View v) {
+        // Create an Intent
+        Intent i = new Intent(this, AddScholarshipActivity.class);
+        Log.v("debug", "Start button was clicked.");
+        startActivityForResult(i, ADD_SCHOLARSHIP_ACTIVITY_ID);
+    }
 }
