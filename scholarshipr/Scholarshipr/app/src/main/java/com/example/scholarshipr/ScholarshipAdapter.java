@@ -41,7 +41,7 @@ public class ScholarshipAdapter extends RecyclerView.Adapter<ScholarshipAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Log.d("ScholarshipAdapter", "onBindViewHolder" + position);
-        // Get the contact at the passed in position
+
         ScholarshipData scholarship = scholarshipData.get(position);
         // Bind the movie data into the view holder
         holder.bind(scholarship);
