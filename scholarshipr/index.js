@@ -60,7 +60,7 @@ app.use('/edit', (req, res) => {
 	var query = {"_id" : req.query._id };
 	Scholarship.findOne( query, (err, result) => {
 		if (err) {
-		    res.render("error", {'error' : err});
+		    res.json("error", {'error' : err});
 		}
 		else {
 		    // this uses EJS to render the views/editForm.ejs template	
@@ -156,7 +156,7 @@ app.use('/all', (req, res) => {
 						'</td>'
 					)
 					res.write("<td>" +
-						' <a class="btn btn-warning btn-sm" href="/edit?_id=' + scholarship._id + '\>Edit</a>' +
+						' <a class="btn btn-warning btn-sm" href="/edit?_id=' + scholarship._id + '"\>Edit</a>' +
 						'</td>'
 					)
 					res.write("<td>" +
