@@ -159,8 +159,8 @@ public class MainActivity extends AppCompatActivity {
             }
             allScholarships.addAll(scholarships);
             scholarshipAdapter.notifyDataSetChanged();
-            Log.v("debug", "Attempting to access data" + allScholarships.get(0).getName());
-            Log.v("debug", "Attempting to access data" + allScholarships.get(1).getName());
+            //Log.v("debug", "Attempting to access data" + allScholarships.get(0).getName());
+            //Log.v("debug", "Attempting to access data" + allScholarships.get(1).getName());
             // now we can set the status in the TextView
             //tv.setText(message);
         } catch (Exception e) {

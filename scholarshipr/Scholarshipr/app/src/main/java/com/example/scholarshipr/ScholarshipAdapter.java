@@ -96,7 +96,7 @@ public class ScholarshipAdapter extends RecyclerView.Adapter<ScholarshipAdapter.
                 public void onClick(View v) {
                     // Navigate to a new activity on tap
                     Intent i = new Intent(context, ScholarshipDetails.class);
-                    //i.putExtra("", Parcels.wrap(contact));
+                    i.putExtra("scholarship",scholarship.getName());
                     context.startActivity(i);
                 }
             });
