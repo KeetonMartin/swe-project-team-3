@@ -24,15 +24,15 @@
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnAdd"
+        android:id="@+id/btnSuggestScholarship"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
         android:layout_margin="16dp"
-        android:src="@drawable/ic_add_scholarshipbutton"
+        android:src="@drawable/ic_suggest_scholarship_button"
         app:backgroundTint="@color/purple_200"
         app:fabSize="normal"
         app:layout_anchor="@id/rvScholarships"
         app:layout_anchorGravity="bottom|right|end"
-        app:tint="@color/white" />
+        app:tint="@color/white"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
