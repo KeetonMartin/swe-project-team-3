@@ -6,14 +6,14 @@ import java.time.ZonedDateTime;
 
 
 public class ScholarshipData extends AppCompatActivity {
-    public static String name;
-    public static String org;
-    public static String description;
-    public static int amount;
-    public static String approvalStatus;
-    public static ZonedDateTime dueDate;
-    public static Float gpaRequirement;
-    public static String id;
+    public String name;
+    public String org;
+    public String description;
+    public int amount;
+    public String approvalStatus;
+    public ZonedDateTime dueDate;
+    public float gpaRequirement;
+    public String id;
 
     // Constructor for a ScholarshipData
     public ScholarshipData(String name, String org, String description, int amount,
@@ -28,6 +28,12 @@ public class ScholarshipData extends AppCompatActivity {
         this.gpaRequirement = gpaRequirement;
         this.id = id;
     }
+
+    public ScholarshipData(String name){
+        this.name = name;
+    }
+
+    public ScholarshipData(){}
 
     public String getName(){
         return name;

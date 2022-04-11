@@ -88,11 +88,7 @@ public class ScholarshipAdapter extends RecyclerView.Adapter<ScholarshipAdapter.
             tvScholarshipName.setText(scholarship.getName());
             tvScholarshipInfo.setText(scholarship.getDescription());
 
-            /*
-            Use Glide to load an image into the ImageView
-            (currently set to a default profile image, can change to load from Parse Backend later)
-            and crop the image into a circle
-            */
+
 
             // Register the click listener on the whole row
             container.setOnClickListener(new View.OnClickListener() {
