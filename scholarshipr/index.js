@@ -43,11 +43,13 @@ app.use('/create', (req, res) => {
 			res.end();
 		}
 		else {
+			console.log("Successfully created new scholarship");
+			res.redirect('/all');
 			// display the "successfull created" message
-			res.type('html').status(200);
-			res.write('successfully added ' + newScholarship.name + ' to the database');
-			res.write("<a href=\"/viewDetail?_id=" + newScholarship._id + "\">[See Completed Entry]</a>")
-			res.end();
+			// res.type('html').status(200);
+			// res.write('successfully added ' + newScholarship.name + ' to the database');
+			// res.write("<a href=\"/viewDetail?_id=" + newScholarship._id + "\">[See Completed Entry]</a>")
+			// res.end();
 		}
 	});
 }
@@ -62,28 +64,24 @@ app.use('/edit', (req, res) => {
 		}
 		else {
 		    // this uses EJS to render the views/editForm.ejs template	
+			console.log("approval status:");
+			console.log(result.approvalStatus);
 		    res.render("edit", {"scholarship" : result});
 		}
 	    });
     });
 
-// app.use('/edit', (req, res) => {
-// 	res.redirect('/public/edit.html', { _id: req.query._id });
-// });
-// endpoint for editing an existing scholarship
-// this is the action of the "edit scholarship" form
-
-
 app.use('/update', (req, res) => {
 	// construct the scholarship from the form data which is in the request body
 	var filter = { '_id': req.query._id };
+	
 	var action = {
 		'$set': {
 			name: (req.query.name ? req.query.name : req.body.name),
 			org: (req.query.org ? req.query.org : req.body.org),
 			description: (req.query.description ? req.query.description : req.body.description),
 			dollarAmount: (req.query.dollarAmount ? req.query.dollarAmount : req.body.dollarAmount),
-			approvalStatus: (req.query.approvalStatus ? req.query.approvalStatus : req.body.approvalStatus),
+			approvalStatus: (req.query.approvalStatus ? req.query.approvalStatus : (req.body.approvalStatus == "1" ? true : false)),
 			dueDate: (req.query.dueDate ? req.query.dueDate : req.body.dueDate),
 			gpaRequirement: (req.query.gpaRequirement ? req.query.gpaRequirement : req.body.gpaRequirement),
 		}
@@ -98,7 +96,7 @@ app.use('/update', (req, res) => {
 			res.json({ 'status': 'scholarship not found' });
 		}
 		else {
-			res.json({ 'status': 'success' });
+			res.redirect('/all');
 		}
 	});
 
@@ -113,10 +111,12 @@ app.use('/all', (req, res) => {
 
 	// starterTemplate = '<htmllang=\"en\">	<head>	<!--Requiredmetatags-->	<metacharset=\"utf-8\">	<metaname=\"viewport\"content=\"width=device-width,initial-scale=1,shrink-to-fit=no\">	<!--BootstrapCSS-->	<linkrel=\"stylesheet\"href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\"integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\"crossorigin=\"anonymous\">	<title>Hello,world!</title>	</head>	<body>'
 
-	res.write("<nav class=\"navbar navbar-expand-lg navbar-dark bg-dark\">    <a class=\"navbar-brand\" href=\"/\">Scholarshipr</a>    <button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarNavAltMarkup\" aria-controls=\"navbarNavAltMarkup\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">      <span class=\"navbar-toggler-icon\"></span>    </button>    <div class=\"collapse navbar-collapse\" id=\"navbarNavAltMarkup\">      <div class=\"navbar-nav\">        <a class=\"nav-item nav-link\" href=\"/all\">All</a>        <a class=\"nav-item nav-link\" href=\"/public/create.html\">Add</a>        <a class=\"nav-item nav-link\" href=\"#\">Suggested</a>      </div>    </div>  </nav>")
+	res.write("<nav class=\"navbar navbar-expand-lg navbar-dark bg-dark\"> <a class=\"navbar-brand\" href=\"/\">Scholarshipr</a>");
+	res.write("<button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarNavAltMarkup\" aria-controls=\"navbarNavAltMarkup\" aria-expanded=\"false\" aria-label=\"Toggle navigation\"> <span class=\"navbar-toggler-icon\"></span> </button>");
+	res.write("<div class=\"collapse navbar-collapse\" id=\"navbarNavAltMarkup\"> <div class=\"navbar-nav\"> <a class=\"nav-item nav-link\" href=\"/all\">All</a> <a class=\"nav-item nav-link\" href=\"/public/create.html\">Add</a><a class=\"nav-item nav-link\" href=\"#\">Suggested</a></div></div></nav>")
 	res.write("<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\">");
 	// res.write(starterTemplate)
-
+	res.write("<div class=\"container mt-2 pl-2\">");
 	// find all the scholarship objects in the database
 	Scholarship.find({}, (err, scholarships) => {
 		if (err) {
@@ -173,7 +173,7 @@ app.use('/all', (req, res) => {
 		}
 	}).sort({ 'dollarAmount': 'desc' }); // this sorts them BEFORE rendering the results
 
-	res.write('  </body></html>')
+	res.write(' </div> </body></html>')
 
 });
 
@@ -201,11 +201,15 @@ app.use('/viewDetail', (req, res) => {
 
 				// starterTemplate = '<htmllang=\"en\">	<head>	<!--Requiredmetatags-->	<metacharset=\"utf-8\">	<metaname=\"viewport\"content=\"width=device-width,initial-scale=1,shrink-to-fit=no\">	<!--BootstrapCSS-->	<linkrel=\"stylesheet\"href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\"integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\"crossorigin=\"anonymous\">	<title>Hello,world!</title>	</head>	<body>'
 			
-				res.write("<nav class=\"navbar navbar-expand-lg navbar-dark bg-dark\">    <a class=\"navbar-brand\" href=\"/\">Scholarshipr</a>    <button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarNavAltMarkup\" aria-controls=\"navbarNavAltMarkup\" aria-expanded=\"false\" aria-label=\"Toggle navigation\">      <span class=\"navbar-toggler-icon\"></span>    </button>    <div class=\"collapse navbar-collapse\" id=\"navbarNavAltMarkup\">      <div class=\"navbar-nav\">        <a class=\"nav-item nav-link\" href=\"/all\">All</a>        <a class=\"nav-item nav-link\" href=\"/public/create.html\">Add</a>        <a class=\"nav-item nav-link\" href=\"#\">Suggested</a>      </div>    </div>  </nav>")
-				res.write("<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\">");			
+				res.write("<nav class=\"navbar navbar-expand-lg navbar-dark bg-dark\"> <a class=\"navbar-brand\" href=\"/\">Scholarshipr</a>");
+				res.write("<button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarNavAltMarkup\" aria-controls=\"navbarNavAltMarkup\" aria-expanded=\"false\" aria-label=\"Toggle navigation\"> <span class=\"navbar-toggler-icon\"></span> </button>");
+				res.write("<div class=\"collapse navbar-collapse\" id=\"navbarNavAltMarkup\"> <div class=\"navbar-nav\"> <a class=\"nav-item nav-link\" href=\"/all\">All</a> <a class=\"nav-item nav-link\" href=\"/public/create.html\">Add</a><a class=\"nav-item nav-link\" href=\"#\">Suggested</a></div></div></nav>")
+				res.write("<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\">");
 				// res.write('<h3>Here is a specific scholarship</h3>');
 
 				res.write(getCardHTML(scholarship));
+				res.end();
+
 			}
 		});
 	}
@@ -229,7 +233,7 @@ function getCardHTML(scholarship) {
 	}
 
 	let returnableString = "<div class=\"col d-flex justify-content-center\">";
-	returnableString += "<div class=\"card\" style=\"width: 18rem;\"> <div class=\"card-body\">    <h5 class=\"card-title\">";
+	returnableString += "<div class=\"card\" style=\"width: 50rem;\"> <div class=\"card-body\">    <h5 class=\"card-title\">";
 	returnableString += name;
 	returnableString += "</h5>    <p class=\"card-text\">";
 	returnableString += description;
@@ -249,9 +253,7 @@ function getCardHTML(scholarship) {
 
 	returnableString += "</li>    <li class=\"list-group-item\">";
 	returnableString += "GPA Requirement: " + gpaRequirement;
-	returnableString += "</li>    <li class=\"list-group-item\">";
-
-	returnableString += "</li>  </ul>  <div class=\"mx-auto\"><div class=\"card-body\">";
+	returnableString += "</li> </ul>  <div class=\"mx-auto\"><div class=\"card-body\">";
 	returnableString += "<a class=\"btn btn-warning btn-sm mr-1\" href=\"/edit?_id=" + scholarship._id + "\">Edit</a>";
 	// returnableString += "<br/>"
 	returnableString += "<a class=\"btn btn-danger btn-sm ml-1\" href=\"/delete?_id=" + scholarship._id + "\">Delete</a>"; 
@@ -331,7 +333,7 @@ app.use('/api', (req, res) => {
 
 app.use('/public', express.static('public'));
 
-app.use('/', (req, res) => { res.redirect('/public/create.html'); });
+app.use('/', (req, res) => { res.redirect('/all'); });
 
 
 
