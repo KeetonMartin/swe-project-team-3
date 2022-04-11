@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Bundle;
+import android.util.JsonReader;
 import android.util.Log;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONObject;
+import org.json.JSONArray;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -38,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     protected List<ScholarshipData> allScholarships;
     protected SearchView searchView;
     protected ScholarshipAdapter scholarshipAdapter;
+    protected JSONArray jso;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,29 +89,38 @@ public class MainActivity extends AppCompatActivity {
                             // and that it has a /test endpoint that returns a JSON object with
                             // a field called "message"
 
-                            URL url = new URL("http://localhost:3000/api");
+
+                            URL url = new URL("http://10.0.2.2:3000/api");
+
+
+
 
                             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                             conn.setRequestMethod("GET");
                             conn.connect();
 
+                            Log.v("debug", "We connected. Connection: " + conn);
+
+
                             Scanner in = new Scanner(url.openStream());
                             String response = in.nextLine();
-                            String name;
-                            JSONObject jso = new JSONObject(response);
-                            Iterator<String> keys = (Iterator<String>) jso.keys();
-                            while (keys.hasNext()) {
-                                String key = keys.next();
-                                JSONObject value = jso.getJSONObject(key);
-                                name = value.getString("name");
-                                ScholarshipData scholarship = new ScholarshipData(name);
-                                allScholarships.add(scholarship);
-                                scholarshipAdapter.notifyDataSetChanged();
 
-                            }
+                            jso = new JSONArray(response);
+                            //JsonReader jsonReader = Json.createReader(...);
+                            //JSONArray jso = JSONObject.getArray();
+                            //jsonReader.close();
+
+                            //Log.v("debug", "Here's the JSON we got: " + jso);
+                            //String name;
+                            //Iterator<String> keys = (Iterator<String>) jso.keys();
+
+                            //Log.v("debug", "Attempting to access data" + jso.getJSONObject(0));
+
+                            //Log.v("debug", "We read in all scholarship");
                             //String org;
                             //int amount;
                             //String date;
+                            //Log.v("debug", "List of Scholarships: " + allScholarships);
 
 
 
@@ -120,7 +132,7 @@ public class MainActivity extends AppCompatActivity {
                             org = jo.getString("Organization");*/
 
                         } catch (Exception e) {
-                            e.toString();
+                            e.printStackTrace();
                         }
                     }
             );
@@ -128,8 +140,21 @@ public class MainActivity extends AppCompatActivity {
             // this waits for up to 2 seconds
             // it's a bit of a hack because it's not truly asynchronous
             // but it should be okay for our purposes (and is a lot easier)
-            executor.awaitTermination(2, TimeUnit.SECONDS);
+            executor.awaitTermination(3, TimeUnit.SECONDS);
+            String name;
+            for (int i = 0; i < jso.length(); i++) {
+                JSONObject value = jso.getJSONObject(i);
+                name = value.getString("name");
+                Log.v("debug", "Attempting to name" + name);
+                ScholarshipData scholarship = new ScholarshipData(name);
 
+                allScholarships.add(scholarship);
+                scholarshipAdapter.notifyDataSetChanged();
+
+
+
+            }
+            Log.v("debug", "Attempting to access data" + allScholarships);
             // now we can set the status in the TextView
             //tv.setText(message);
         } catch (Exception e) {
