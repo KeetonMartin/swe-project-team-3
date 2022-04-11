@@ -13,3 +13,9 @@ Iryna :), Keeton, Will and Will's project for CMSC B353 - Software Engineering
 5. Install dependencies: `npm install`
 6. Start the express server: `npm run start` or `nodemon index.js`
 7. Go to http://localhost:3000
+
+## Database / Mongo Problems
+Sometimes I get a database error when I try to launch my mongo installation on that certain port. It seems the workaround is to view the processes currently running and then kill the mongo one by id (all using grep in terminal). Chris shared some instructions:
+`ps -ef | grep mongo`
+`kill 58431`
+Or kill whichever one has the id you want to kill
