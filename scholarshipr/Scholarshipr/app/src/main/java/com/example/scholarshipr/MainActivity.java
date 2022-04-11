@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
     private SwipeRefreshLayout swipeContainer;
     private RecyclerView rvScholarships;
-    protected List<ScholarshipData> allScholarships;
+    protected ArrayList<ScholarshipData> allScholarships;
     protected SearchView searchView;
     protected ScholarshipAdapter scholarshipAdapter;
     protected JSONArray jso;
@@ -140,21 +140,27 @@ public class MainActivity extends AppCompatActivity {
             // this waits for up to 2 seconds
             // it's a bit of a hack because it's not truly asynchronous
             // but it should be okay for our purposes (and is a lot easier)
-            executor.awaitTermination(3, TimeUnit.SECONDS);
+            executor.awaitTermination(2, TimeUnit.SECONDS);
             String name;
+            ArrayList<ScholarshipData> scholarships = new ArrayList<>();
+            ScholarshipData scholarship;
             for (int i = 0; i < jso.length(); i++) {
                 JSONObject value = jso.getJSONObject(i);
                 name = value.getString("name");
-                Log.v("debug", "Attempting to name" + name);
-                ScholarshipData scholarship = new ScholarshipData(name);
 
-                allScholarships.add(scholarship);
-                scholarshipAdapter.notifyDataSetChanged();
+                scholarship = new ScholarshipData(name);
+                scholarships.add(scholarship);
+
+                Log.v("debug", "Attempting to add " + name);
+                //scholarshipAdapter.notifyDataSetChanged();
 
 
 
             }
-            Log.v("debug", "Attempting to access data" + allScholarships);
+            allScholarships.addAll(scholarships);
+            scholarshipAdapter.notifyDataSetChanged();
+            Log.v("debug", "Attempting to access data" + allScholarships.get(0).getName());
+            Log.v("debug", "Attempting to access data" + allScholarships.get(1).getName());
             // now we can set the status in the TextView
             //tv.setText(message);
         } catch (Exception e) {

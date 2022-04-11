@@ -13,6 +13,7 @@ public class ScholarshipDetails extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scholarshipdetails);
         tvScholarshipName = findViewById(R.id.tvScholarshipName);
+
         //tvScholarshipName.setText(scholarship.getName());
     }
 }
