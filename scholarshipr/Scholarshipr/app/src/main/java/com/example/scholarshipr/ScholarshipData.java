@@ -69,7 +69,7 @@ public class ScholarshipData extends AppCompatActivity {
         this.name = name;
     }
 
-    public ScholarshipData(){}
+
 
     public String getName(){
         return name;
