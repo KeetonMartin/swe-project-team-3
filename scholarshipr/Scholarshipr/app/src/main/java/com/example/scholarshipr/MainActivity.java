@@ -9,6 +9,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.os.Bundle;
 import android.util.JsonReader;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -46,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scholarshipdata);
+        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+        getSupportActionBar().setCustomView(R.layout.actionbar_title);
 
         rvScholarships = findViewById(R.id.rvScholarships);
         allScholarships = new ArrayList<>();
@@ -76,6 +80,39 @@ public class MainActivity extends AppCompatActivity {
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_options, menu);
+
+        searchView = (SearchView) menu.findItem(R.id.search_bar).getActionView();
+        // Set up search bar functionality
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                filter(newText);
+                return true;
+            }
+        });
+
+        return true;
+    }
+
+    private void filter(String newText) {
+        List<ScholarshipData> filteredList = new ArrayList<>();
+        for (ScholarshipData scholarship : allScholarships) {
+            if (scholarship.getName().toLowerCase().contains(newText.toLowerCase())) {
+                filteredList.add(scholarship);
+            }
+        }
+        scholarshipAdapter.filterList(filteredList);
     }
 
     public void getAllScholarships() {

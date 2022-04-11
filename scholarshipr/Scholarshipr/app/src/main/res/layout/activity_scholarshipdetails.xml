@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <TextView
         android:id="@+id/tvScholarshipInfo"
         android:layout_width="match_parent"
@@ -22,14 +23,6 @@
         android:textAlignment="center"
         android:textColor="@color/black"
         android:textSize="30sp" />
-
-    <TextView
-        android:id="@+id/tvScholarshipName"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginBottom="15dp"
-        android:text="" />
 
     <TextView
         android:id="@+id/tvDueDate"
