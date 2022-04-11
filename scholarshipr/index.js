@@ -120,16 +120,14 @@ app.use('/all', (req, res) => {
 	// find all the scholarship objects in the database
 	Scholarship.find({}, (err, scholarships) => {
 		if (err) {
-			res.type('html').status(200);
 			console.log('uh oh' + err);
 			res.write(err);
 		}
 		else {
 			if (scholarships.length == 0) {
-				res.type('html').status(200);
 				res.write('There are no scholarships');
 				res.end();
-				return;
+				// return;
 			}
 			else {
 				res.write('<h3>Here are the scholarships in the database:</h3>');
@@ -226,7 +224,6 @@ function getCardHTML(scholarship) {
 	let approvalStatus = scholarship.approvalStatus;
 	let dueDate = scholarship.dueDate;
 	let gpaRequirement = scholarship.gpaRequirement;
-
 
 	approvalEmoji = "❓"
 	if (approvalStatus == "true") {
