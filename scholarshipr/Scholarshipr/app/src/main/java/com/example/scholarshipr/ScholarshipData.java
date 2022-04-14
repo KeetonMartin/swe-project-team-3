@@ -1,5 +1,6 @@
 package com.example.scholarshipr;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +23,8 @@ public class ScholarshipData extends AppCompatActivity {
     public ZonedDateTime dueDate;
     public float gpaRequirement;
     public String id;
+    private FloatingActionButton btnSendSuggestion;
+    private Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,13 +32,18 @@ public class ScholarshipData extends AppCompatActivity {
         setContentView(R.layout.activity_scholarshipdata);
 
         // Set up a listener on the Suggest Scholarship button
-        final FloatingActionButton button = (FloatingActionButton) findViewById(R.id.btnSuggestScholarship);
-
-        button.setOnClickListener(new View.OnClickListener() {
+        btnSendSuggestion = (FloatingActionButton) findViewById(R.id.btnSuggestScholarship);
+        context = this;
+        btnSendSuggestion.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
-                openSuggestScholarshipActivity();
+                Intent i = new Intent(context, SuggestScholarshipActivity.class);
+                Log.v("debug", "New Scholarship button was clicked.");
+                startActivity(i);
             }
         });
+
+
 
     }
 

@@ -12,6 +12,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 
 public class SuggestScholarshipActivity extends AppCompatActivity {
+    private Button btnSendSuggestion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,13 +23,14 @@ public class SuggestScholarshipActivity extends AppCompatActivity {
         getSupportActionBar().setTitle("Suggest a Scholarship");
 
         // Set up a listener on the Send Suggestion button
-        final Button button = (Button) findViewById(R.id.btnSendSuggestion);
+        /*btnSendSuggestion =  findViewById(R.id.btnSendSuggestion);
 
-        button.setOnClickListener(new View.OnClickListener() {
+        btnSendSuggestion.setOnClickListener(new View.OnClickListener() {
+            @Override
             public void onClick(View v) {
                 sendSuggestion();
             }
-        });
+        });*/
 
     }
 
