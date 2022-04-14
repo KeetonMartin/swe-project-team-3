@@ -10,14 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Scholarshipr"
         android:usesCleartextTraffic="true">
-
-        <activity android:name=".ScholarshipDetails"></activity>
         <activity
             android:name=".SuggestScholarshipActivity"
-            android:exported="true">
-        </activity>
-        <activity android:name=".ScholarshipData"
-            android:exported="true"></activity>
+            android:exported="false"
+            android:label="@string/title_activity_suggest_scholarship"
+            android:theme="@style/Theme.Scholarshipr" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -27,8 +24,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".ScholarshipData"
+            android:exported="true">
 
-
+    </activity>
+        <activity android:name=".ScholarshipDetails"/>
     </application>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />

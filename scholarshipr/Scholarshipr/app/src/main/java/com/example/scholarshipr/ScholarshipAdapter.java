@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -23,7 +22,6 @@ import java.util.List;
 public class ScholarshipAdapter extends RecyclerView.Adapter<ScholarshipAdapter.ViewHolder>{
     private Context context;
     private List<ScholarshipData> scholarshipData;
-    private Button btnSendSuggestion;
 
     public ScholarshipAdapter(Context context, List<ScholarshipData> scholarshipData) {
         this.context = context;
