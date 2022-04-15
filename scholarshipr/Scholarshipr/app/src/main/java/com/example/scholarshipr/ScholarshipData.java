@@ -1,6 +1,5 @@
 package com.example.scholarshipr;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,38 +22,6 @@ public class ScholarshipData extends AppCompatActivity {
     public ZonedDateTime dueDate;
     public float gpaRequirement;
     public String id;
-    private FloatingActionButton btnSendSuggestion;
-    private Context context;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scholarshipdata);
-
-        // Set up a listener on the Suggest Scholarship button
-        btnSendSuggestion = (FloatingActionButton) findViewById(R.id.btnSuggestScholarship);
-        context = this;
-        btnSendSuggestion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(context, SuggestScholarshipActivity.class);
-                Log.v("debug", "New Scholarship button was clicked.");
-                startActivity(i);
-            }
-        });
-
-
-
-    }
-
-    public static final int SUGGEST_SCHOLARSHIP_ACTIVITY_ID = 1;
-
-    private void openSuggestScholarshipActivity() {
-        // Create an Intent
-        Intent i = new Intent(this, SuggestScholarshipActivity.class);
-        Log.v("debug", "New Scholarship button was clicked.");
-        startActivityForResult(i, SUGGEST_SCHOLARSHIP_ACTIVITY_ID);
-    }
 
     // Constructor for a ScholarshipData
     public ScholarshipData(String name, String org, String description, int amount,

@@ -6,14 +6,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.JsonReader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.widget.Button;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -27,6 +25,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
@@ -46,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
     protected SearchView searchView;
     protected ScholarshipAdapter scholarshipAdapter;
     protected JSONArray jso;
-    private Button btnSendSuggestion;
-    private Context context;
+
+    public static final int SUGGEST_SCHOLARSHIP_ACTIVITY_ID = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
         scholarshipAdapter = new ScholarshipAdapter(this, allScholarships);
         // Set the adapter on the recycler view
         rvScholarships.setAdapter(scholarshipAdapter);
-        context = this;
         // Set a layout manager on the recycler view
         rvScholarships.setLayoutManager(new LinearLayoutManager(this));
         getAllScholarships();
@@ -86,11 +85,24 @@ public class MainActivity extends AppCompatActivity {
                 android.R.color.holo_orange_light,
                 android.R.color.holo_red_light);
 
-        btnSendSuggestion = findViewById(R.id.btnSendSuggestion);
+        // Set up a listener on the Suggest Scholarship button
+        final FloatingActionButton button = (FloatingActionButton) findViewById(R.id.btnSuggestScholarship);
 
-
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                openSuggestScholarshipActivity();
+            }
+        });
 
     }
+
+    private void openSuggestScholarshipActivity() {
+        // Create an Intent
+        Intent i = new Intent(this, SuggestScholarshipActivity.class);
+        Log.v("debug", "New Scholarship button was clicked.");
+        startActivityForResult(i, SUGGEST_SCHOLARSHIP_ACTIVITY_ID);
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
