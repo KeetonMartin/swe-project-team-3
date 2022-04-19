@@ -134,6 +134,77 @@ app.use('/update', (req, res) => {
 }
 );
 
+// endpoint for showing suggested scholarships
+app.use('/suggested', (req, res) => {
+
+	// res.redirect('/public/tableOfData.html');
+	res.type('html').status(200);
+
+	// starterTemplate = '<htmllang=\"en\">	<head>	<!--Requiredmetatags-->	<metacharset=\"utf-8\">	<metaname=\"viewport\"content=\"width=device-width,initial-scale=1,shrink-to-fit=no\">	<!--BootstrapCSS-->	<linkrel=\"stylesheet\"href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\"integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\"crossorigin=\"anonymous\">	<title>Hello,world!</title>	</head>	<body>'
+
+	res.write(getPageOutline());
+	// res.write(starterTemplate)
+	res.write("<div class=\"container mt-2 pl-2\">");
+	// find all the scholarship objects in the database
+	Scholarship.find({approvalStatus: "false"}, (err, scholarships) => {
+		if (err) {
+			console.log('uh oh' + err);
+			res.write(err);
+		}
+		else {
+			if (scholarships.length == 0) {
+				res.write('There are no scholarships');
+				res.end();
+				// return;
+			}
+			else {
+				res.write('<h3>Here are the pending scholarships in the database:</h3>');
+				res.write('<table class="table table-light">');
+
+				//Establish the table header
+				var header = "<tr><th>Id</th><th>Name</th><th>Organization</th><th>Dollar Amount</th><th>Due Date</th></tr>";
+				res.write(header);
+
+				// show all the scholarships
+				scholarships.forEach((scholarship) => {
+
+					res.write('<tr>');
+
+					res.write('<td>' + scholarship._id + '</td>');
+					res.write('<td>' + scholarship.name + '</td>');
+					res.write('<td>' + scholarship.org + '</td>');
+					res.write('<td>' + scholarship.dollarAmount + '</td>');
+					if (scholarship.dueDate) {
+						res.write('<td>' + scholarship.dueDate.toISOString().slice(0, 10) + '</td>');
+					} else {
+						res.write('<td>' + 'Unknown' + '</td>');
+					}
+					res.write('<td>' + // TODO put a popup
+						` <a class="btn btn-danger btn-sm" href="#" onclick="if (confirm('Delete scholarship &quot;` + scholarship.name + `&quot;?')) { window.location = '/delete?_id=` + scholarship.id + `' }">Delete</a>` +
+						'</td>'
+					);
+					res.write("<td>" +
+						' <a class="btn btn-warning btn-sm" href="/edit?_id=' + scholarship._id + '"\>Edit</a>' +
+						'</td>'
+					);
+					res.write("<td>" +
+					' <a class="btn btn-info btn-sm" href="/viewDetail?_id=' + scholarship._id + '">ViewDetail</a>' +
+					'</td>'
+					);
+
+					res.write('</tr>');
+
+				});
+				res.write('</table>');
+				res.end();
+			}
+		}
+	}).sort({ 'dollarAmount': 'desc' }); // this sorts them BEFORE rendering the results
+
+	res.write(' </div> </body></html>');
+
+});
+
 // endpoint for showing all the scholarships
 app.use('/all', (req, res) => {
 
@@ -249,7 +320,7 @@ function getPageOutline() {
 	let template = "";
 	template += "<nav class=\"navbar navbar-expand-lg navbar-dark bg-dark\"> <a class=\"navbar-brand\" href=\"/\">Scholarshipr</a>";
 	template += "<button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarNavAltMarkup\" aria-controls=\"navbarNavAltMarkup\" aria-expanded=\"false\" aria-label=\"Toggle navigation\"> <span class=\"navbar-toggler-icon\"></span> </button>";
-	template += "<div class=\"collapse navbar-collapse\" id=\"navbarNavAltMarkup\"> <div class=\"navbar-nav\"> <a class=\"nav-item nav-link\" href=\"/all\">All</a> <a class=\"nav-item nav-link\" href=\"/public/create.html\">Add</a><a class=\"nav-item nav-link\" href=\"#\">Suggested</a></div></div></nav>";
+	template += "<div class=\"collapse navbar-collapse\" id=\"navbarNavAltMarkup\"> <div class=\"navbar-nav\"> <a class=\"nav-item nav-link\" href=\"/all\">All</a> <a class=\"nav-item nav-link\" href=\"/public/create.html\">Add</a><a class=\"nav-item nav-link\" href=\"/suggested\">Suggested</a></div></div></nav>";
 	template += "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\">";
 	return template;
 }
@@ -346,20 +417,17 @@ app.use('/api', (req, res) => {
 			console.log('uh oh' + err);
 			res.json({});
 		}
-		else if (scholarships.length == 0) {
-			// no objects found, so send back empty json
-			res.json({});
-		}
-		else if (scholarships.length == 1) {
-			var scholarship = scholarships[0];
-			// send back a single JSON object
-			res.json({ "name": scholarship.name, "age": scholarship.age });
-		}
 		else {
 			// construct an array out of the result
 			var returnArray = [];
 			scholarships.forEach((scholarship) => {
-				returnArray.push({ "name": scholarship.name, "age": scholarship.age });
+				returnArray.push({ "name": scholarship.name, 
+				"org": scholarship.org,
+				"description": scholarship.description,
+				"dollarAmount": scholarship.dollarAmount,
+				"approvalStatus": scholarship.approvalStatus,
+				"dueDate": scholarship.dueDate,
+				"gpaRequirement": scholarship.gpaRequirement});
 			});
 			// send it back as JSON Array
 			res.json(returnArray);
