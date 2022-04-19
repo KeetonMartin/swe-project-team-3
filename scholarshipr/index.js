@@ -417,20 +417,17 @@ app.use('/api', (req, res) => {
 			console.log('uh oh' + err);
 			res.json({});
 		}
-		else if (scholarships.length == 0) {
-			// no objects found, so send back empty json
-			res.json({});
-		}
-		else if (scholarships.length == 1) {
-			var scholarship = scholarships[0];
-			// send back a single JSON object
-			res.json({ "name": scholarship.name, "age": scholarship.age });
-		}
 		else {
 			// construct an array out of the result
 			var returnArray = [];
 			scholarships.forEach((scholarship) => {
-				returnArray.push({ "name": scholarship.name, "age": scholarship.age });
+				returnArray.push({ "name": scholarship.name, 
+				"org": scholarship.org,
+				"description": scholarship.description,
+				"dollarAmount": scholarship.dollarAmount,
+				"approvalStatus": scholarship.approvalStatus,
+				"dueDate": scholarship.dueDate,
+				"gpaRequirement": scholarship.gpaRequirement});
 			});
 			// send it back as JSON Array
 			res.json(returnArray);
