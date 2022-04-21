@@ -2,7 +2,8 @@
 var express = require('express');
 var app = express();
 const url = require('url');    
-
+let path = require('path');
+let fs = require('fs');
 
 app.set('view engine', 'ejs');
 app.set('views', './public')
@@ -316,12 +317,84 @@ app.use('/viewDetail', (req, res) => {
 	}
  });
 
+app.use('/export', (req, res) => {
+	let filename = 'export.csv';
+	let absPath = path.join(__dirname, '/exports/', filename);
+	let relPath = path.join('./exports', filename); // path relative to server root
+
+	// Get all scholarships in the database
+	Scholarship.find({}, (err, scholarships) => {
+		if (err) {
+			console.log('uh oh' + err)
+			return res.write(err)
+		}
+		else {
+			// Create a temporary file with the CSV content of the database
+			fs.writeFile(relPath, toCSV(scholarships), (err) => {
+				if (err) {
+					console.log(err)
+				}
+				console.log(`Writing the file to ${absPath}`)
+				// After downloading, redirect back to the homepage
+				res.set({
+					'Location': '/all'
+				});
+				// Download the file
+				res.download(absPath, (err) => {
+					if (err) {
+						console.log(err)
+					}
+					console.log('Download finished!')
+					// Delete the temporary file
+					fs.unlink(relPath, (err) => {
+						if (err) {
+							console.log(err)
+						}
+						console.log(`Removed file ${filename}.`)
+					})
+				})
+			})
+		}
+	})
+})
+
+// Takes a list of scholarship objects from the database and returns a string in CSV format.
+function toCSV(scholarships) {
+	console.log(`Making CSV out of ${scholarships.length} scholarships`)
+	let columns = ['_id', 'name', 'org', 'description', 'dollarAmount', 'approvalStatus', 'dueDate', 'gpaRequirement']
+	// Start CSV off with column headers
+	let csv = columns.join(',') + '\n'
+	scholarships.forEach(scholarship => {
+		columns.forEach(key => {
+			csv += scholarship[key]
+			if (key != columns[columns.length-1]) {
+				csv += ','
+			}
+		})
+		csv += '\n'
+	})
+
+	return csv
+}
+
+// Create the header
 function getPageOutline() {
-	let template = "";
-	template += "<nav class=\"navbar navbar-expand-lg navbar-dark bg-dark\"> <a class=\"navbar-brand\" href=\"/\">Scholarshipr</a>";
-	template += "<button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarNavAltMarkup\" aria-controls=\"navbarNavAltMarkup\" aria-expanded=\"false\" aria-label=\"Toggle navigation\"> <span class=\"navbar-toggler-icon\"></span> </button>";
-	template += "<div class=\"collapse navbar-collapse\" id=\"navbarNavAltMarkup\"> <div class=\"navbar-nav\"> <a class=\"nav-item nav-link\" href=\"/all\">All</a> <a class=\"nav-item nav-link\" href=\"/public/create.html\">Add</a><a class=\"nav-item nav-link\" href=\"/suggested\">Suggested</a></div></div></nav>";
-	template += "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\">";
+	let template = '';
+	// Add brand
+	template += '<nav class="navbar navbar-expand-lg navbar-dark bg-dark"> <a class="navbar-brand" href="/">Scholarshipr</a>'
+
+	// Add navigation section
+	template += '<div class="collapse navbar-collapse" id="navbarNavAltMarkup"> <div class="navbar-nav">'
+
+	template += '<a class="nav-item nav-link" href="/all">All</a>'
+	template += '<a class="nav-item nav-link" href="/suggested">Suggested</a>'
+	template += '<a class="nav-item nav-link" href="/public/create.html">Add</a>'
+	template += '<a class="nav-item nav-link" href="/export">Export data</a>'
+
+	template += '</div></div></nav>'
+
+	// Add stylesheet
+	template += '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">'
 	return template;
 }
 function getCardHTML(scholarship) {
@@ -372,7 +445,6 @@ function getCardHTML(scholarship) {
 	return returnableString;
 }
 
-// IMPLEMENT THIS ENDPOINT!
 app.use('/delete', (req, res) => {
 	if (!req.query._id) {
 		console.log('uh oh, no id in the query parameters')
