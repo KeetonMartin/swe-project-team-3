@@ -352,9 +352,10 @@ function getCardHTML(scholarship) {
 	returnableString += "</li>    <li class=\"list-group-item\">";
 	returnableString += "GPA Requirement: " + gpaRequirement;
 	returnableString += "</li> </ul>  <div class=\"mx-auto\"><div class=\"card-body\">";
-	returnableString += '<td>' + 
-						` <a class="btn btn-success btn-sm mr-1" href="#" onclick="if (confirm('Approve scholarship &quot;` + scholarship.name + `&quot;?')) { window.location = '/approve?_id=` + scholarship.id + `' }">Approve</a>` +
-						'</td>';
+	
+	if(scholarship.approvalStatus=="false"){
+		returnableString += `<td> <a class="btn btn-success btn-sm mr-1" href="#" onclick="if (confirm('Approve scholarship &quot;` + scholarship.name + `&quot;?')) { window.location = '/approve?_id=` + scholarship.id + `' }">Approve</a>` +'</td>';
+	}
 						
 	returnableString += "<a class=\"btn btn-warning btn-sm mr-1\" href=\"/edit?_id=" + scholarship._id + "\">Edit</a>";
 	returnableString += "<a class=\"btn btn-danger btn-sm\" href=\"#\" onclick=\"if (confirm('Delete scholarship &quot;` + scholarship.name + `&quot;?')) { window.location = '/delete?_id=` + scholarship.id + `' }\">Delete</a>"; 
