@@ -389,7 +389,7 @@ function getPageOutline() {
 	template += '<a class="nav-item nav-link" href="/all">All</a>'
 	template += '<a class="nav-item nav-link" href="/suggested">Suggested</a>'
 	template += '<a class="nav-item nav-link" href="/public/create.html">Add</a>'
-	template += '<a class="nav-item nav-link" href="/export">Export data</a>'
+	template += '<a class="nav-item nav-link" href="/export">Export</a>'
 
 	template += '</div></div></nav>'
 
