@@ -109,7 +109,6 @@ app.use('/update', (req, res) => {
 		if (err) {
 			res.type('html').status(200);
 			res.write(getPageOutline());
-			// res.write(starterTemplate)
 			res.write("<div class=\"container mt-2 pl-2\">");
 			res.write("<p>" + err + "</p>");
 			res.write("<a class=\"btn btn-info btn-sm\" href=\"/all\">Return</a>");
@@ -119,7 +118,6 @@ app.use('/update', (req, res) => {
 		else if (!orig) {
 			res.type('html').status(200);
 			res.write(getPageOutline());
-			// res.write(starterTemplate)
 			res.write("<div class=\"container mt-2 pl-2\">");
 			res.write("<p>Scholarship with requested ID was not found.</p>");
 			res.write("<a class=\"btn btn-info btn-sm\" href=\"/all\">Return</a>");
@@ -137,15 +135,11 @@ app.use('/update', (req, res) => {
 // endpoint for showing suggested scholarships
 app.use('/suggested', (req, res) => {
 
-	// res.redirect('/public/tableOfData.html');
 	res.type('html').status(200);
 
-	// starterTemplate = '<htmllang=\"en\">	<head>	<!--Requiredmetatags-->	<metacharset=\"utf-8\">	<metaname=\"viewport\"content=\"width=device-width,initial-scale=1,shrink-to-fit=no\">	<!--BootstrapCSS-->	<linkrel=\"stylesheet\"href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\"integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\"crossorigin=\"anonymous\">	<title>Hello,world!</title>	</head>	<body>'
-
 	res.write(getPageOutline());
-	// res.write(starterTemplate)
 	res.write("<div class=\"container mt-2 pl-2\">");
-	// find all the scholarship objects in the database
+	// find all the pending scholarship objects in the database
 	Scholarship.find({approvalStatus: "false"}, (err, scholarships) => {
 		if (err) {
 			console.log('uh oh' + err);
@@ -153,9 +147,8 @@ app.use('/suggested', (req, res) => {
 		}
 		else {
 			if (scholarships.length == 0) {
-				res.write('There are no scholarships');
+				res.write('<p class="ml-2">There are no pending scholarships.</p>');
 				res.end();
-				// return;
 			}
 			else {
 				res.write('<h3>Here are the pending scholarships in the database:</h3>');
@@ -179,7 +172,7 @@ app.use('/suggested', (req, res) => {
 					} else {
 						res.write('<td>' + 'Unknown' + '</td>');
 					}
-					res.write('<td>' + // TODO put a popup
+					res.write('<td>' + 
 						` <a class="btn btn-danger btn-sm" href="#" onclick="if (confirm('Delete scholarship &quot;` + scholarship.name + `&quot;?')) { window.location = '/delete?_id=` + scholarship.id + `' }">Delete</a>` +
 						'</td>'
 					);
@@ -190,6 +183,10 @@ app.use('/suggested', (req, res) => {
 					res.write("<td>" +
 					' <a class="btn btn-info btn-sm" href="/viewDetail?_id=' + scholarship._id + '">ViewDetail</a>' +
 					'</td>'
+					);
+					res.write('<td>' + 
+						` <a class="btn btn-success btn-sm" href="#" onclick="if (confirm('Approve scholarship &quot;` + scholarship.name + `&quot;?')) { window.location = '/approve?_id=` + scholarship.id + `' }">Approve</a>` +
+						'</td>'
 					);
 
 					res.write('</tr>');
@@ -208,23 +205,19 @@ app.use('/suggested', (req, res) => {
 // endpoint for showing all the scholarships
 app.use('/all', (req, res) => {
 
-	// res.redirect('/public/tableOfData.html');
 	res.type('html').status(200);
 
-	// starterTemplate = '<htmllang=\"en\">	<head>	<!--Requiredmetatags-->	<metacharset=\"utf-8\">	<metaname=\"viewport\"content=\"width=device-width,initial-scale=1,shrink-to-fit=no\">	<!--BootstrapCSS-->	<linkrel=\"stylesheet\"href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\"integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\"crossorigin=\"anonymous\">	<title>Hello,world!</title>	</head>	<body>'
-
 	res.write(getPageOutline());
-	// res.write(starterTemplate)
 	res.write("<div class=\"container mt-2 pl-2\">");
-	// find all the scholarship objects in the database
-	Scholarship.find({}, (err, scholarships) => {
+	// find all the scholarship objects in the database with approvalStatus=="true"
+	Scholarship.find({approvalStatus: "true"}, (err, scholarships) => {
 		if (err) {
 			console.log('uh oh' + err);
 			res.write(err);
 		}
 		else {
 			if (scholarships.length == 0) {
-				res.write('There are no scholarships');
+				res.write('<p class="ml-2">There are no scholarships</p>');
 				res.end();
 				// return;
 			}
@@ -250,7 +243,7 @@ app.use('/all', (req, res) => {
 					} else {
 						res.write('<td>' + 'Unknown' + '</td>');
 					}
-					res.write('<td>' + // TODO put a popup
+					res.write('<td>' +
 						` <a class="btn btn-danger btn-sm" href="#" onclick="if (confirm('Delete scholarship &quot;` + scholarship.name + `&quot;?')) { window.location = '/delete?_id=` + scholarship.id + `' }">Delete</a>` +
 						'</td>'
 					);
@@ -303,11 +296,7 @@ app.use('/viewDetail', (req, res) => {
 				console.log(`Found scholarship with id ${scholarship._id}`)
 				res.type('html').status(200);
 
-				// starterTemplate = '<htmllang=\"en\">	<head>	<!--Requiredmetatags-->	<metacharset=\"utf-8\">	<metaname=\"viewport\"content=\"width=device-width,initial-scale=1,shrink-to-fit=no\">	<!--BootstrapCSS-->	<linkrel=\"stylesheet\"href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\"integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\"crossorigin=\"anonymous\">	<title>Hello,world!</title>	</head>	<body>'
-			
 				res.write(getPageOutline());
-				// res.write('<h3>Here is a specific scholarship</h3>');
-
 				res.write(getCardHTML(scholarship));
 				res.end();
 
@@ -355,7 +344,6 @@ function getCardHTML(scholarship) {
 	returnableString += "</li>    <li class=\"list-group-item\">";
 
 	if (scholarship.dueDate) {
-		console.log(scholarship.dueDate);
 		returnableString += "Due Date: " + scholarship.dueDate.toISOString().slice(0, 10);
 	} else {
 		returnableString += "Due Date: " + "Unknown";
@@ -364,15 +352,17 @@ function getCardHTML(scholarship) {
 	returnableString += "</li>    <li class=\"list-group-item\">";
 	returnableString += "GPA Requirement: " + gpaRequirement;
 	returnableString += "</li> </ul>  <div class=\"mx-auto\"><div class=\"card-body\">";
+	returnableString += '<td>' + 
+						` <a class="btn btn-success btn-sm mr-1" href="#" onclick="if (confirm('Approve scholarship &quot;` + scholarship.name + `&quot;?')) { window.location = '/approve?_id=` + scholarship.id + `' }">Approve</a>` +
+						'</td>';
+						
 	returnableString += "<a class=\"btn btn-warning btn-sm mr-1\" href=\"/edit?_id=" + scholarship._id + "\">Edit</a>";
-	// returnableString += "<br/>"
-	returnableString += "<a class=\"btn btn-danger btn-sm ml-1\" href=\"/delete?_id=" + scholarship._id + "\">Delete</a>"; 
+	returnableString += "<a class=\"btn btn-danger btn-sm\" href=\"#\" onclick=\"if (confirm('Delete scholarship &quot;` + scholarship.name + `&quot;?')) { window.location = '/delete?_id=` + scholarship.id + `' }\">Delete</a>"; 
 	returnableString += "</div></div></div></div>";
 
 	return returnableString;
 }
 
-// IMPLEMENT THIS ENDPOINT!
 app.use('/delete', (req, res) => {
 	if (!req.query._id) {
 		console.log('uh oh, no id in the query parameters')
@@ -398,6 +388,33 @@ app.use('/delete', (req, res) => {
 	}
     res.redirect(302, '/all');
 });
+
+
+app.use('/approve', (req, res) => {
+	if (!req.query._id) {
+		console.log('uh oh, no id in the query parameters')
+		return res.type('html').write('uh oh, no id in the query parameters')
+	} else {
+		const id = req.query._id
+		console.log(`Trying to approve scholarship: ${id}`)
+		var action = {'$set': {approvalStatus: "true"}}
+		Scholarship.findOneAndUpdate({'_id':id}, action, (err, scholarship) => {
+			if (err) {
+				console.log("Unexpected error")
+				return res.type('html').write("Unexpected error")
+			}
+			else if (!scholarship) {
+				console.log(`Could not find scholarship with id ${id}`)
+				return res.type('html').write(`Could not find scholarship with id ${id}`)
+			}
+			else {
+				console.log(`Approved scholarship with id ${scholarship._id}`)
+			}
+		});
+	}
+    res.redirect(302, '/all');
+});
+
 
 // endpoint for accessing data via the web api
 // to use this, make a request for /api to get an array of all Scholarship objects
