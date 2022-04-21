@@ -38,34 +38,51 @@ app.use('/create', (req, res) => {
 	newScholarship.save((err) => {
 		if (err) {
 			res.type('html').status(200);
-			res.write('uh oh: ' + err);
-			console.log(err);
+			res.write(getPageOutline());
+			// res.write(starterTemplate)
+			res.write("<div class=\"container mt-2 pl-2\">");
+			res.write("<p>Sorry, there has been an error while creating a scholarship. Please see the details below:</p>");
+			res.write("<p>" + err + "</p>");
+			res.write("<a class=\"btn btn-info btn-sm\" href=\"/all\">Return</a>");
+			res.write(' </div> </body></html>');
 			res.end();
 		}
 		else {
 			console.log("Successfully created new scholarship");
 			res.redirect('/all');
-			// display the "successfull created" message
-			// res.type('html').status(200);
-			// res.write('successfully added ' + newScholarship.name + ' to the database');
-			// res.write("<a href=\"/viewDetail?_id=" + newScholarship._id + "\">[See Completed Entry]</a>")
-			// res.end();
 		}
 	});
 }
 );
 
 
+
 app.use('/edit', (req, res) => {
 	var query = {"_id" : req.query._id };
 	Scholarship.findOne( query, (err, result) => {
 		if (err) {
-		    res.json("error", {'error' : err});
+		    res.type('html').status(200);
+			res.write(getPageOutline());
+			// res.write(starterTemplate)
+			res.write("<div class=\"container mt-2 pl-2\">");
+			res.write("<p>Sorry, there has been an error while editing a scholarship. Please see the details below:</p>");
+			res.write("<p>" + err + "</p>");
+			res.write("<a class=\"btn btn-info btn-sm\" href=\"/all\">Return</a>");
+			res.write(' </div> </body></html>');
+			res.end();
+		}
+		else if (!result){
+			res.type('html').status(200);
+			res.write(getPageOutline());
+			// res.write(starterTemplate)
+			res.write("<div class=\"container mt-2 pl-2\">");
+			res.write("<p>The scholarship with requested ID cannot be found.</p>");
+			res.write("<a class=\"btn btn-info btn-sm\" href=\"/all\">Return</a>");
+			res.write(' </div> </body></html>');
+			res.end();
 		}
 		else {
 		    // this uses EJS to render the views/editForm.ejs template	
-			console.log("approval status:");
-			console.log(result.approvalStatus);
 		    res.render("edit", {"scholarship" : result});
 		}
 	    });
@@ -90,10 +107,24 @@ app.use('/update', (req, res) => {
 
 	Scholarship.findOneAndUpdate(filter, action, (err, orig) => {
 		if (err) {
-			res.json({ 'status': err });
+			res.type('html').status(200);
+			res.write(getPageOutline());
+			// res.write(starterTemplate)
+			res.write("<div class=\"container mt-2 pl-2\">");
+			res.write("<p>" + err + "</p>");
+			res.write("<a class=\"btn btn-info btn-sm\" href=\"/all\">Return</a>");
+			res.write(' </div> </body></html>');
+			res.end();
 		}
 		else if (!orig) {
-			res.json({ 'status': 'scholarship not found' });
+			res.type('html').status(200);
+			res.write(getPageOutline());
+			// res.write(starterTemplate)
+			res.write("<div class=\"container mt-2 pl-2\">");
+			res.write("<p>Scholarship with requested ID was not found.</p>");
+			res.write("<a class=\"btn btn-info btn-sm\" href=\"/all\">Return</a>");
+			res.write(' </div> </body></html>');
+			res.end();
 		}
 		else {
 			res.redirect('/all');
@@ -103,6 +134,77 @@ app.use('/update', (req, res) => {
 }
 );
 
+// endpoint for showing suggested scholarships
+app.use('/suggested', (req, res) => {
+
+	// res.redirect('/public/tableOfData.html');
+	res.type('html').status(200);
+
+	// starterTemplate = '<htmllang=\"en\">	<head>	<!--Requiredmetatags-->	<metacharset=\"utf-8\">	<metaname=\"viewport\"content=\"width=device-width,initial-scale=1,shrink-to-fit=no\">	<!--BootstrapCSS-->	<linkrel=\"stylesheet\"href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\"integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\"crossorigin=\"anonymous\">	<title>Hello,world!</title>	</head>	<body>'
+
+	res.write(getPageOutline());
+	// res.write(starterTemplate)
+	res.write("<div class=\"container mt-2 pl-2\">");
+	// find all the scholarship objects in the database
+	Scholarship.find({approvalStatus: "false"}, (err, scholarships) => {
+		if (err) {
+			console.log('uh oh' + err);
+			res.write(err);
+		}
+		else {
+			if (scholarships.length == 0) {
+				res.write('There are no scholarships');
+				res.end();
+				// return;
+			}
+			else {
+				res.write('<h3>Here are the pending scholarships in the database:</h3>');
+				res.write('<table class="table table-light">');
+
+				//Establish the table header
+				var header = "<tr><th>Id</th><th>Name</th><th>Organization</th><th>Dollar Amount</th><th>Due Date</th></tr>";
+				res.write(header);
+
+				// show all the scholarships
+				scholarships.forEach((scholarship) => {
+
+					res.write('<tr>');
+
+					res.write('<td>' + scholarship._id + '</td>');
+					res.write('<td>' + scholarship.name + '</td>');
+					res.write('<td>' + scholarship.org + '</td>');
+					res.write('<td>' + scholarship.dollarAmount + '</td>');
+					if (scholarship.dueDate) {
+						res.write('<td>' + scholarship.dueDate.toISOString().slice(0, 10) + '</td>');
+					} else {
+						res.write('<td>' + 'Unknown' + '</td>');
+					}
+					res.write('<td>' + // TODO put a popup
+						` <a class="btn btn-danger btn-sm" href="#" onclick="if (confirm('Delete scholarship &quot;` + scholarship.name + `&quot;?')) { window.location = '/delete?_id=` + scholarship.id + `' }">Delete</a>` +
+						'</td>'
+					);
+					res.write("<td>" +
+						' <a class="btn btn-warning btn-sm" href="/edit?_id=' + scholarship._id + '"\>Edit</a>' +
+						'</td>'
+					);
+					res.write("<td>" +
+					' <a class="btn btn-info btn-sm" href="/viewDetail?_id=' + scholarship._id + '">ViewDetail</a>' +
+					'</td>'
+					);
+
+					res.write('</tr>');
+
+				});
+				res.write('</table>');
+				res.end();
+			}
+		}
+	}).sort({ 'dollarAmount': 'desc' }); // this sorts them BEFORE rendering the results
+
+	res.write(' </div> </body></html>');
+
+});
+
 // endpoint for showing all the scholarships
 app.use('/all', (req, res) => {
 
@@ -111,10 +213,7 @@ app.use('/all', (req, res) => {
 
 	// starterTemplate = '<htmllang=\"en\">	<head>	<!--Requiredmetatags-->	<metacharset=\"utf-8\">	<metaname=\"viewport\"content=\"width=device-width,initial-scale=1,shrink-to-fit=no\">	<!--BootstrapCSS-->	<linkrel=\"stylesheet\"href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\"integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\"crossorigin=\"anonymous\">	<title>Hello,world!</title>	</head>	<body>'
 
-	res.write("<nav class=\"navbar navbar-expand-lg navbar-dark bg-dark\"> <a class=\"navbar-brand\" href=\"/\">Scholarshipr</a>");
-	res.write("<button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarNavAltMarkup\" aria-controls=\"navbarNavAltMarkup\" aria-expanded=\"false\" aria-label=\"Toggle navigation\"> <span class=\"navbar-toggler-icon\"></span> </button>");
-	res.write("<div class=\"collapse navbar-collapse\" id=\"navbarNavAltMarkup\"> <div class=\"navbar-nav\"> <a class=\"nav-item nav-link\" href=\"/all\">All</a> <a class=\"nav-item nav-link\" href=\"/public/create.html\">Add</a><a class=\"nav-item nav-link\" href=\"#\">Suggested</a></div></div></nav>")
-	res.write("<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\">");
+	res.write(getPageOutline());
 	// res.write(starterTemplate)
 	res.write("<div class=\"container mt-2 pl-2\">");
 	// find all the scholarship objects in the database
@@ -142,27 +241,27 @@ app.use('/all', (req, res) => {
 
 					res.write('<tr>');
 
-					res.write('<td>' + scholarship._id + '</td>')
-					res.write('<td>' + scholarship.name + '</td>')
-					res.write('<td>' + scholarship.org + '</td>')
-					res.write('<td>' + scholarship.dollarAmount + '</td>')
+					res.write('<td>' + scholarship._id + '</td>');
+					res.write('<td>' + scholarship.name + '</td>');
+					res.write('<td>' + scholarship.org + '</td>');
+					res.write('<td>' + scholarship.dollarAmount + '</td>');
 					if (scholarship.dueDate) {
-						res.write('<td>' + scholarship.dueDate.toDateString() + '</td>')
+						res.write('<td>' + scholarship.dueDate.toISOString().slice(0, 10) + '</td>');
 					} else {
-						res.write('<td>' + 'Unknown' + '</td>')
+						res.write('<td>' + 'Unknown' + '</td>');
 					}
 					res.write('<td>' + // TODO put a popup
 						` <a class="btn btn-danger btn-sm" href="#" onclick="if (confirm('Delete scholarship &quot;` + scholarship.name + `&quot;?')) { window.location = '/delete?_id=` + scholarship.id + `' }">Delete</a>` +
 						'</td>'
-					)
+					);
 					res.write("<td>" +
 						' <a class="btn btn-warning btn-sm" href="/edit?_id=' + scholarship._id + '"\>Edit</a>' +
 						'</td>'
-					)
+					);
 					res.write("<td>" +
 					' <a class="btn btn-info btn-sm" href="/viewDetail?_id=' + scholarship._id + '">ViewDetail</a>' +
 					'</td>'
-					)
+					);
 
 					res.write('</tr>');
 
@@ -173,7 +272,7 @@ app.use('/all', (req, res) => {
 		}
 	}).sort({ 'dollarAmount': 'desc' }); // this sorts them BEFORE rendering the results
 
-	res.write(' </div> </body></html>')
+	res.write(' </div> </body></html>');
 
 });
 
@@ -190,10 +289,15 @@ app.use('/viewDetail', (req, res) => {
 				return res.type('html').write("Unexpected error")
 			}
 			else if (!scholarship) {
-				// A strange error I can't debug happens here. Recreate by
-				// visiting http://localhost:3000/delete?_id=5
 				console.log(`Could not find scholarship with id ${id}`)
-				return res.type('html').write(`Could not find scholarship with id ${id}`)
+				res.type('html').status(200);
+				res.write(getPageOutline());
+				res.write("<div class=\"container mt-2 pl-2\">");
+				res.write("<p>Could not find scholarship with id" + id +"</p>");
+				res.write("<a class=\"btn btn-info btn-sm\" href=\"/all\">Return</a>");
+				res.write(' </div> </body></html>');
+				res.end();
+				
 			}
 			else {
 				console.log(`Found scholarship with id ${scholarship._id}`)
@@ -201,10 +305,7 @@ app.use('/viewDetail', (req, res) => {
 
 				// starterTemplate = '<htmllang=\"en\">	<head>	<!--Requiredmetatags-->	<metacharset=\"utf-8\">	<metaname=\"viewport\"content=\"width=device-width,initial-scale=1,shrink-to-fit=no\">	<!--BootstrapCSS-->	<linkrel=\"stylesheet\"href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\"integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\"crossorigin=\"anonymous\">	<title>Hello,world!</title>	</head>	<body>'
 			
-				res.write("<nav class=\"navbar navbar-expand-lg navbar-dark bg-dark\"> <a class=\"navbar-brand\" href=\"/\">Scholarshipr</a>");
-				res.write("<button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarNavAltMarkup\" aria-controls=\"navbarNavAltMarkup\" aria-expanded=\"false\" aria-label=\"Toggle navigation\"> <span class=\"navbar-toggler-icon\"></span> </button>");
-				res.write("<div class=\"collapse navbar-collapse\" id=\"navbarNavAltMarkup\"> <div class=\"navbar-nav\"> <a class=\"nav-item nav-link\" href=\"/all\">All</a> <a class=\"nav-item nav-link\" href=\"/public/create.html\">Add</a><a class=\"nav-item nav-link\" href=\"#\">Suggested</a></div></div></nav>")
-				res.write("<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\">");
+				res.write(getPageOutline());
 				// res.write('<h3>Here is a specific scholarship</h3>');
 
 				res.write(getCardHTML(scholarship));
@@ -215,6 +316,14 @@ app.use('/viewDetail', (req, res) => {
 	}
  });
 
+function getPageOutline() {
+	let template = "";
+	template += "<nav class=\"navbar navbar-expand-lg navbar-dark bg-dark\"> <a class=\"navbar-brand\" href=\"/\">Scholarshipr</a>";
+	template += "<button class=\"navbar-toggler\" type=\"button\" data-toggle=\"collapse\" data-target=\"#navbarNavAltMarkup\" aria-controls=\"navbarNavAltMarkup\" aria-expanded=\"false\" aria-label=\"Toggle navigation\"> <span class=\"navbar-toggler-icon\"></span> </button>";
+	template += "<div class=\"collapse navbar-collapse\" id=\"navbarNavAltMarkup\"> <div class=\"navbar-nav\"> <a class=\"nav-item nav-link\" href=\"/all\">All</a> <a class=\"nav-item nav-link\" href=\"/public/create.html\">Add</a><a class=\"nav-item nav-link\" href=\"/suggested\">Suggested</a></div></div></nav>";
+	template += "<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css\" integrity=\"sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T\" crossorigin=\"anonymous\">";
+	return template;
+}
 function getCardHTML(scholarship) {
 
 	let name = scholarship.name;
@@ -246,9 +355,10 @@ function getCardHTML(scholarship) {
 	returnableString += "</li>    <li class=\"list-group-item\">";
 
 	if (scholarship.dueDate) {
-		returnableString += "Due Date: " + dueDate.toDateString();
+		console.log(scholarship.dueDate);
+		returnableString += "Due Date: " + scholarship.dueDate.toISOString().slice(0, 10);
 	} else {
-		returnableString += "Due Date: " + "unknown";
+		returnableString += "Due Date: " + "Unknown";
 	}
 
 	returnableString += "</li>    <li class=\"list-group-item\">";
@@ -307,20 +417,17 @@ app.use('/api', (req, res) => {
 			console.log('uh oh' + err);
 			res.json({});
 		}
-		else if (scholarships.length == 0) {
-			// no objects found, so send back empty json
-			res.json({});
-		}
-		else if (scholarships.length == 1) {
-			var scholarship = scholarships[0];
-			// send back a single JSON object
-			res.json({ "name": scholarship.name, "age": scholarship.age });
-		}
 		else {
 			// construct an array out of the result
 			var returnArray = [];
 			scholarships.forEach((scholarship) => {
-				returnArray.push({ "name": scholarship.name, "age": scholarship.age });
+				returnArray.push({ "name": scholarship.name, 
+				"org": scholarship.org,
+				"description": scholarship.description,
+				"dollarAmount": scholarship.dollarAmount,
+				"approvalStatus": scholarship.approvalStatus,
+				"dueDate": scholarship.dueDate,
+				"gpaRequirement": scholarship.gpaRequirement});
 			});
 			// send it back as JSON Array
 			res.json(returnArray);
