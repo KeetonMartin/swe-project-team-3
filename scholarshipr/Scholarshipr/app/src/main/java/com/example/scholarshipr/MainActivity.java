@@ -14,6 +14,7 @@ import android.util.JsonReader;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.SearchView;
 import android.widget.TextView;
 
@@ -132,10 +133,42 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()){
+            case R.id.NoGPA:
+                filterNoGPA(0);
+                break;
+            case R.id.GPA:
+                filterGPA();
+        }
+        return true;
+    }
+
     private void filter(String newText) {
         List<ScholarshipData> filteredList = new ArrayList<>();
         for (ScholarshipData scholarship : allScholarships) {
             if (scholarship.getName().toLowerCase().contains(newText.toLowerCase())) {
+                filteredList.add(scholarship);
+            }
+        }
+        scholarshipAdapter.filterList(filteredList);
+    }
+
+    private void filterNoGPA(int amount) {
+        List<ScholarshipData> filteredList = new ArrayList<>();
+        for (ScholarshipData scholarship : allScholarships) {
+            if (scholarship.getGpaRequirement().equals(amount)) {
+                filteredList.add(scholarship);
+            }
+        }
+        scholarshipAdapter.filterList(filteredList);
+    }
+
+    private void filterGPA() {
+        List<ScholarshipData> filteredList = new ArrayList<>();
+        for (ScholarshipData scholarship : allScholarships) {
+            if (scholarship.getGpaRequirement() > 0) {
                 filteredList.add(scholarship);
             }
         }
