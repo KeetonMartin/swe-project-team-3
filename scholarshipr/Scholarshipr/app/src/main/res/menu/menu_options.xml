@@ -11,6 +11,15 @@
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="collapseActionView|ifRoom" />
 
+    <item
+        android:id="@+id/filter"
+        android:icon="@drawable/ic_suggest_scholarship_button"
+        android:title="Filter">
+
+    </item>
+
+
+
 
 
 

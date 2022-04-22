@@ -1,5 +1,6 @@
 package com.example.scholarshipr;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -7,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.JsonReader;
 import android.util.Log;
@@ -15,9 +17,11 @@ import android.view.MenuInflater;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -48,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     protected JSONArray jso;
 
     public static final int SUGGEST_SCHOLARSHIP_ACTIVITY_ID = 1;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,8 +142,12 @@ public class MainActivity extends AppCompatActivity {
         scholarshipAdapter.filterList(filteredList);
     }
 
+
     public void getAllScholarships() {
         //TextView tv = findViewById(R.id.statusField);
+
+
+        ScholarshipData scholarship;
 
         try {
             ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -165,6 +174,8 @@ public class MainActivity extends AppCompatActivity {
                             String response = in.nextLine();
 
                             jso = new JSONArray(response);
+                            Log.v("debug", "We connected. Json Objects: " + jso);
+
                             //JsonReader jsonReader = Json.createReader(...);
                             //JSONArray jso = JSONObject.getArray();
                             //jsonReader.close();
@@ -194,32 +205,58 @@ public class MainActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     }
+
             );
+            //Log.v("debug", "Connection has not timed out");
 
             // this waits for up to 2 seconds
             // it's a bit of a hack because it's not truly asynchronous
             // but it should be okay for our purposes (and is a lot easier)
-            executor.awaitTermination(2, TimeUnit.SECONDS);
-            String name;
+            executor.awaitTermination(5, TimeUnit.SECONDS);
             ArrayList<ScholarshipData> scholarships = new ArrayList<>();
-            ScholarshipData scholarship;
+            String name;
+            String org;
+            String descrip;
+            int amount;
+            String status;
+            String date;
+            float gpa;
+
+            Log.v("debug", "Connection has not timed out");
             for (int i = 0; i < jso.length(); i++) {
                 JSONObject value = jso.getJSONObject(i);
+                Log.v("debug", "Value of Value:" + value);
                 name = value.getString("name");
+                Log.v("debug", "Value of Name:" + name);
+                org = value.getString("org");
+                Log.v("debug", "Value of Name:" + org);
+                descrip = value.getString("description");
+                Log.v("debug", "Value of Name:" + descrip);
+                status = value.getString("approvalStatus");
+                Log.v("debug", "Value of Name:" + status);
+                date = "";
+                amount = value.getInt("dollarAmount");
+                Log.v("debug", "Value of Name:" + amount);
+                gpa = (float) value.getDouble("gpaRequirement");
+                Log.v("debug", "Value of Name:" + gpa);
 
-                scholarship = new ScholarshipData(name);
+                scholarship = new ScholarshipData(name,org,descrip,amount,status,date,gpa);
+                //scholarship = new ScholarshipData(name);
                 scholarships.add(scholarship);
-
+                Log.v("debug", "Attempting to add " + scholarship.getDescription());
                 Log.v("debug", "Attempting to add " + name);
+                Log.v("debug", "Attempting to add " + org);
+                //Log.v("debug", "Attempting to add " + date);
+                Log.v("debug", "Attempting to add " + gpa);
                 //scholarshipAdapter.notifyDataSetChanged();
-
-
-
+                //allScholarships.add(scholarship);
+                //scholarshipAdapter.notifyDataSetChanged();
             }
+
+
             allScholarships.addAll(scholarships);
             scholarshipAdapter.notifyDataSetChanged();
-            //Log.v("debug", "Attempting to access data" + allScholarships.get(0).getName());
-            //Log.v("debug", "Attempting to access data" + allScholarships.get(1).getName());
+
             // now we can set the status in the TextView
             //tv.setText(message);
         } catch (Exception e) {
