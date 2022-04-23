@@ -137,10 +137,14 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.NoGPA:
-                filterNoGPA(0);
+                filterNoGPA();
                 break;
             case R.id.GPA:
                 filterGPA();
+                break;
+            case R.id.clear_text:
+                filter("");
+                break;
         }
         return true;
     }
@@ -155,10 +159,10 @@ public class MainActivity extends AppCompatActivity {
         scholarshipAdapter.filterList(filteredList);
     }
 
-    private void filterNoGPA(int amount) {
+    private void filterNoGPA() {
         List<ScholarshipData> filteredList = new ArrayList<>();
         for (ScholarshipData scholarship : allScholarships) {
-            if (scholarship.getGpaRequirement().equals(amount)) {
+            if (scholarship.getGpaRequirement() == 0) {
                 filteredList.add(scholarship);
             }
         }
@@ -245,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
             // this waits for up to 2 seconds
             // it's a bit of a hack because it's not truly asynchronous
             // but it should be okay for our purposes (and is a lot easier)
-            executor.awaitTermination(5, TimeUnit.SECONDS);
+            executor.awaitTermination(2, TimeUnit.SECONDS);
             ArrayList<ScholarshipData> scholarships = new ArrayList<>();
             String name;
             String org;
@@ -268,10 +272,23 @@ public class MainActivity extends AppCompatActivity {
                 status = value.getString("approvalStatus");
                 Log.v("debug", "Value of Name:" + status);
                 date = "";
-                amount = value.getInt("dollarAmount");
-                Log.v("debug", "Value of Name:" + amount);
-                gpa = (float) value.getDouble("gpaRequirement");
+
+
+                if(value.isNull("gpaRequirement")){
+                    gpa = 0;
+                    Log.v("debug", "Value of GPA" + gpa);
+                }else{
+                    Log.v("debug", "Value of GPA");
+                    gpa = (float) value.getDouble("gpaRequirement");
+                }
                 Log.v("debug", "Value of Name:" + gpa);
+                if(value.isNull("dollarAmount")){
+                    amount = 0;
+                }else{
+                    amount = value.getInt("dollarAmount");
+                }
+                Log.v("debug", "Value of Name:" + amount);
+
 
                 scholarship = new ScholarshipData(name,org,descrip,amount,status,date,gpa);
                 //scholarship = new ScholarshipData(name);
@@ -286,7 +303,7 @@ public class MainActivity extends AppCompatActivity {
                 //scholarshipAdapter.notifyDataSetChanged();
             }
 
-
+            Log.v("debug", "Attempting to check stuff");
             allScholarships.addAll(scholarships);
             scholarshipAdapter.notifyDataSetChanged();
 

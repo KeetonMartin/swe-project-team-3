@@ -23,6 +23,7 @@
                 app:showAsAction="collapseActionView|ifRoom">
 
                 <menu>
+
                     <item
                     android:id="@+id/NoGPA"
                     android:title="No Requirement"></item>
@@ -34,6 +35,10 @@
                 </menu>
 
             </item>
+
+            <item
+                android:id="@+id/clear_text"
+                android:title="Clear"></item>
 
         </menu>
 
