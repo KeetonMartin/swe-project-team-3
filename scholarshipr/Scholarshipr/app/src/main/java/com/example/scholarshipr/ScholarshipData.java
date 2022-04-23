@@ -19,39 +19,13 @@ public class ScholarshipData extends AppCompatActivity {
     public String description;
     public int amount;
     public String approvalStatus;
-    public ZonedDateTime dueDate;
+    public String dueDate;
     public float gpaRequirement;
     public String id;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_scholarshipdata);
-
-        // Set up a listener on the Suggest Scholarship button
-        final FloatingActionButton button = (FloatingActionButton) findViewById(R.id.btnSuggestScholarship);
-
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                openSuggestScholarshipActivity();
-            }
-        });
-
-    }
-
-    public static final int SUGGEST_SCHOLARSHIP_ACTIVITY_ID = 1;
-
-    private void openSuggestScholarshipActivity() {
-        // Create an Intent
-        Intent i = new Intent(this, SuggestScholarshipActivity.class);
-        Log.v("debug", "New Scholarship button was clicked.");
-        startActivityForResult(i, SUGGEST_SCHOLARSHIP_ACTIVITY_ID);
-    }
-
     // Constructor for a ScholarshipData
     public ScholarshipData(String name, String org, String description, int amount,
-                           String approvalStatus, ZonedDateTime dueDate, Float gpaRequirement,
-                           String id) {
+                           String approvalStatus, String dueDate, Float gpaRequirement) {
         this.name = name;
         this.org = org;
         this.description = description;
@@ -69,7 +43,7 @@ public class ScholarshipData extends AppCompatActivity {
         this.name = name;
     }
 
-    public ScholarshipData(){}
+
 
     public String getName(){
         return name;
@@ -86,9 +60,9 @@ public class ScholarshipData extends AppCompatActivity {
     public String getApprovalStatus(){
         return approvalStatus;
     }
-    public ZonedDateTime getDueDate(){
+    /*public ZonedDateTime getDueDate(){
         return dueDate;
-    }
+    }*/
     public Float getGpaRequirement(){
         return gpaRequirement;
     }
@@ -111,9 +85,9 @@ public class ScholarshipData extends AppCompatActivity {
     public void setApprovalStatus(String approvalStatus) {
         this.approvalStatus = approvalStatus;
     }
-    public void setDueDate(ZonedDateTime dueDate) {
+    /*public void setDueDate(ZonedDateTime dueDate) {
         this.dueDate = dueDate;
-    }
+    }*/
     public void setGpaRequirement(Float gpaRequirement) {
         this.gpaRequirement = gpaRequirement;
     }

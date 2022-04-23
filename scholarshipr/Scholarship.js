@@ -7,7 +7,7 @@ mongoose.connect('mongodb://localhost:27017/myDatabase');
 var Schema = mongoose.Schema;
 
 var scholarshipSchema = new Schema({
-	name: {type: String, required: true, unique: true},
+	name: {type: String, required: true, unique: false},
     org: {type: String, required: false, unique: false},
     description: {type: String, required: false, unique: false},
     dollarAmount: {type: Number, required: false, unique: false},

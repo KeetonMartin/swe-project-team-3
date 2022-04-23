@@ -11,6 +11,37 @@
         app:actionViewClass="android.widget.SearchView"
         app:showAsAction="collapseActionView|ifRoom" />
 
+    <item
+        android:id="@+id/filter"
+        android:icon="@drawable/ic_suggest_scholarship_button"
+        android:title="Filter"
+        app:showAsAction="collapseActionView|ifRoom">
+        <menu>
+            <item
+                android:id="@+id/gpa"
+                android:title="GPA"
+                app:showAsAction="collapseActionView|ifRoom">
+
+                <menu>
+                    <item
+                    android:id="@+id/NoGPA"
+                    android:title="No Requirement"></item>
+
+                    <item
+                        android:id="@+id/GPA"
+                        android:title="Required"></item>
+
+                </menu>
+
+            </item>
+
+        </menu>
+
+    </item>
+
+
+
+
 
 
 </menu>
