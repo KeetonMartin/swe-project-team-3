@@ -1,6 +1,7 @@
 package com.example.scholarshipr;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 /*import com.bumptech.glide.Glide;
@@ -92,11 +94,16 @@ public class ScholarshipAdapter extends RecyclerView.Adapter<ScholarshipAdapter.
 
             // Register the click listener on the whole row
             container.setOnClickListener(new View.OnClickListener() {
+
                 @Override
                 public void onClick(View v) {
                     // Navigate to a new activity on tap
                     Intent i = new Intent(context, ScholarshipDetails.class);
-                    i.putExtra("scholarship",scholarship.getName());
+                    i.putExtra("scholarshipName",scholarship.getName());
+                    i.putExtra("scholarshipDesc",scholarship.getDescription());
+                    i.putExtra("amount",scholarship.getAmount());
+                    i.putExtra("gpa",scholarship.getGpaRequirement());
+                    //i.putExtra("date",scholarship.getDueDate());
                     context.startActivity(i);
                 }
             });
