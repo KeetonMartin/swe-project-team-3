@@ -19,19 +19,18 @@ var Scholarship = require('./Scholarship.js');
 // this is the action of the "create new scholarship" form
 app.use('/create', (req, res) => {
 	res.type('html').status(200);
-	if (!req.query.name ) {
-		res.redirect('/');
-	}
+	
 
 	// construct the scholarship from the form data which is in the request body
 	var newScholarship = new Scholarship({
-		name: req.query.name,
-		org: req.body.org,
-		description: req.body.description,
-		dollarAmount: req.body.dollarAmount,
-		approvalStatus: (req.body.approvalStatus == "1" ? true : false),
-		dueDate: req.body.dueDate,
-		gpaRequirement: req.body.gpaRequirement,
+
+		name: (req.query.name ? req.query.name : req.body.name),
+		org: (req.query.org ? req.query.org : req.body.org),
+		description: (req.query.description ? req.query.description : req.body.description),
+		dollarAmount: (req.query.dollarAmount ? req.query.dollarAmount : req.body.dollarAmount),
+		approvalStatus: (req.query.approvalStatus ? req.query.approvalStatus : (req.body.approvalStatus == "1" ? true : false)),
+		dueDate: (req.query.dueDate ? req.query.dueDate : req.body.dueDate),
+		gpaRequirement: (req.query.gpaRequirement ? req.query.gpaRequirement : req.body.gpaRequirement),
 	});
 
 	// save the scholarship to the database
@@ -46,11 +45,11 @@ app.use('/create', (req, res) => {
 			res.write("<p>" + err + "</p>");
 			res.write("<a class=\"btn btn-info btn-sm\" href=\"/all\">Return</a>");
 			res.write(' </div> </body></html>');
-			res.end();
+			// res.end();
 		}
 		else {
 			console.log("Successfully created new scholarship");
-			res.redirect(302, '/all');
+			res.redirect('/all');
 		}
 	});
 }
