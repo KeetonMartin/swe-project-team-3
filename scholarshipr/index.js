@@ -424,6 +424,30 @@ app.use('/approve', (req, res) => {
     res.redirect(302, '/all');
 });
 
+app.use('/approve', (req, res) => {
+	if (!req.query._id) {
+		console.log('uh oh, no id in the query parameters')
+		return res.type('html').write('uh oh, no id in the query parameters')
+	} else {
+		const id = req.query._id
+		console.log(`Trying to approve scholarship: ${id}`)
+		var action = {'$set': {approvalStatus: "true"}}
+		Scholarship.findOneAndUpdate({'_id':id}, action, (err, scholarship) => {
+			if (err) {
+				console.log("Unexpected error")
+				return res.type('html').write("Unexpected error")
+			}
+			else if (!scholarship) {
+				console.log(`Could not find scholarship with id ${id}`)
+				return res.type('html').write(`Could not find scholarship with id ${id}`)
+			}
+			else {
+				console.log(`Approved scholarship with id ${scholarship._id}`)
+			}
+		});
+	}
+    res.redirect(302, '/all');
+});
 
 // endpoint for accessing data via the web api
 // to use this, make a request for /api to get an array of all Scholarship objects
