@@ -3,10 +3,15 @@ package com.example.scholarshipr;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -45,6 +50,7 @@ import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "MainActivity";
+    private static final String CHANNEL_ID = "888";
     private SwipeRefreshLayout swipeContainer;
     private RecyclerView rvScholarships;
     protected ArrayList<ScholarshipData> allScholarships;
@@ -63,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.actionbar_title);
 
+        createNotificationChannel();
+
         rvScholarships = findViewById(R.id.rvScholarships);
         allScholarships = new ArrayList<>();
         swipeContainer = findViewById(R.id.swipeContainer);
@@ -78,10 +86,21 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 Log.i(TAG, "Refreshing scholarships...");
+
+                List<String> oldShipNames = scholarshipAdapter.getScholarshipNames();
+
                 // Clear out old items before appending in the new ones
                 scholarshipAdapter.clear();
                 // Get and add new items to adapter
                 getAllScholarships();
+
+                List<String> newShipNames = scholarshipAdapter.getScholarshipNames();
+
+                if (newShipDetected(oldShipNames, newShipNames)) {
+                    Log.i(TAG, "Found some new 'ships!");
+                    notifyOfNewShip();
+                }
+
                 // Now we call setRefreshing(false) to signal refresh has finished
                 swipeContainer.setRefreshing(false);
             }
@@ -101,6 +120,59 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private boolean newShipDetected(List<String> oldShips, List<String> newShips) {
+        for (String shipName :
+                newShips) {
+            if (! oldShips.contains(shipName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private void notifyOfNewShip() {
+        String message = "New Scholarship Added!";
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+
+        // Create an explicit intent for an Activity in your app
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, CHANNEL_ID)
+                .setSmallIcon(R.drawable.ic_suggest_scholarship_button)
+                .setContentTitle("New Scholarships Added!")
+                .setContentText("New scholarships have been added to the list!")
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText("New Scholarships Added to Database"))
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                // Set the intent that will fire when the user taps the notification
+                .setContentIntent(pendingIntent)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+
+        // notificationId is a unique int for each notification that you must define
+        notificationManager.notify(811, builder.build());
+
+
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = getString(R.string.channel_name);
+            String description = getString(R.string.channel_description);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     private void openSuggestScholarshipActivity() {
