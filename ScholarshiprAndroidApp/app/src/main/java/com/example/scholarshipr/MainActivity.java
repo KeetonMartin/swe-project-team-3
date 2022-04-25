@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     public static final int SUGGEST_SCHOLARSHIP_ACTIVITY_ID = 1;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -180,6 +181,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void getAllScholarships() {
         //TextView tv = findViewById(R.id.statusField);
 
@@ -256,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
             String descrip;
             int amount;
             String status;
-            String date;
+            ZonedDateTime date;
             float gpa;
 
             Log.v("debug", "Connection has not timed out");
@@ -271,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.v("debug", "Value of Name:" + descrip);
                 status = value.getString("approvalStatus");
                 Log.v("debug", "Value of Name:" + status);
-                date = "";
+                date = ZonedDateTime.parse(value.getString("dueDate"));
 
 
                 if(value.isNull("gpaRequirement")){

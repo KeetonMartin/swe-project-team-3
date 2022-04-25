@@ -95,6 +95,7 @@ public class ScholarshipAdapter extends RecyclerView.Adapter<ScholarshipAdapter.
             // Register the click listener on the whole row
             container.setOnClickListener(new View.OnClickListener() {
 
+                @RequiresApi(api = Build.VERSION_CODES.O)
                 @Override
                 public void onClick(View v) {
                     // Navigate to a new activity on tap
@@ -103,6 +104,7 @@ public class ScholarshipAdapter extends RecyclerView.Adapter<ScholarshipAdapter.
                     i.putExtra("scholarshipDesc",scholarship.getDescription());
                     i.putExtra("amount",scholarship.getAmount());
                     i.putExtra("gpa",scholarship.getGpaRequirement());
+                    i.putExtra("date",scholarship.getDueDate());
                     //i.putExtra("date",scholarship.getDueDate());
                     context.startActivity(i);
                 }
