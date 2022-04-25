@@ -267,12 +267,27 @@ public class MainActivity extends AppCompatActivity {
                 Log.v("debug", "Value of Value:" + value);
                 name = value.getString("name");
                 Log.v("debug", "Value of Name:" + name);
-                org = value.getString("org");
-                Log.v("debug", "Value of Name:" + org);
-                descrip = value.getString("description");
-                Log.v("debug", "Value of Name:" + descrip);
+                if(value.isNull("org")){
+                    org = " ";
+
+                }else{
+                    org = value.getString("org");
+                }
+
+                Log.v("debug", "Value of Org:" + org);
+
+                if(value.isNull("description")){
+                    descrip = " ";
+
+                }else{
+                    descrip = value.getString("description");
+                }
+                Log.v("debug", "Value of Descrip:" + descrip);
                 status = value.getString("approvalStatus");
+
                 Log.v("debug", "Value of Name:" + status);
+
+
                 date = ZonedDateTime.parse(value.getString("dueDate"));
 
 
