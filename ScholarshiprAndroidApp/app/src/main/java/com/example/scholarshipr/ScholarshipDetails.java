@@ -11,7 +11,7 @@ public class ScholarshipDetails extends AppCompatActivity {
     private TextView tvGPA;
     private TextView tvAmount;
     private TextView tvDueDate;
-    private TextView tvDescription;
+    private TextView tvInfo;
     private ScholarshipData scholarship;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +23,7 @@ public class ScholarshipDetails extends AppCompatActivity {
         tvGPA = findViewById(R.id.tvGPA);
         tvAmount = findViewById(R.id.tvAmount);
         tvDueDate = findViewById(R.id.tvDueDate);
-        tvDescription = findViewById(R.id.tvDescription);
+        tvInfo = findViewById(R.id.tvInfo);
         //scholarship = Parcels.unwrap(getIntent().getParcelableExtra("scholarship"));
         //String name = scholarship.getName();
         //Log.v("debug", "Attempting to access data" + name);
@@ -32,7 +32,7 @@ public class ScholarshipDetails extends AppCompatActivity {
         tvGPA.setText(String.valueOf(extras.getFloat("gpa")));
         //tvAmount.setText(extras.getInt("amount"));
         tvAmount.setText(String.valueOf(extras.getInt("amount")));
-        tvDescription.setText(extras.getString("scholarshipDesc"));
+        tvInfo.setText(extras.getString("scholarshipDesc"));
         tvDueDate.setText(String.valueOf(extras.get("date")));
     }
 }

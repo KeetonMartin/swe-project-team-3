@@ -212,8 +212,17 @@ public class MainActivity extends AppCompatActivity {
             case R.id.NoGPA:
                 filterNoGPA();
                 break;
-            case R.id.GPA:
-                filterGPA();
+            case R.id.GPA1:
+                filter0GPA1();
+                break;
+            case R.id.GPA2:
+                filter1GPA2();
+                break;
+            case R.id.GPA3:
+                filter2GPA3();
+                break;
+            case R.id.GPA4:
+                filter3GPAUP();
                 break;
             case R.id.clear_text:
                 filter("");
@@ -246,6 +255,46 @@ public class MainActivity extends AppCompatActivity {
         List<ScholarshipData> filteredList = new ArrayList<>();
         for (ScholarshipData scholarship : allScholarships) {
             if (scholarship.getGpaRequirement() > 0) {
+                filteredList.add(scholarship);
+            }
+        }
+        scholarshipAdapter.filterList(filteredList);
+    }
+
+    private void filter1GPA2() {
+        List<ScholarshipData> filteredList = new ArrayList<>();
+        for (ScholarshipData scholarship : allScholarships) {
+            if (scholarship.getGpaRequirement() < 2.0 && scholarship.getGpaRequirement() > 1.0) {
+                filteredList.add(scholarship);
+            }
+        }
+        scholarshipAdapter.filterList(filteredList);
+    }
+
+    private void filter2GPA3() {
+        List<ScholarshipData> filteredList = new ArrayList<>();
+        for (ScholarshipData scholarship : allScholarships) {
+            if (scholarship.getGpaRequirement() < 3.0 && scholarship.getGpaRequirement() >= 2.0) {
+                filteredList.add(scholarship);
+            }
+        }
+        scholarshipAdapter.filterList(filteredList);
+    }
+
+    private void filter0GPA1() {
+        List<ScholarshipData> filteredList = new ArrayList<>();
+        for (ScholarshipData scholarship : allScholarships) {
+            if (scholarship.getGpaRequirement() < 1.0 && scholarship.getGpaRequirement() > 0) {
+                filteredList.add(scholarship);
+            }
+        }
+        scholarshipAdapter.filterList(filteredList);
+    }
+
+    private void filter3GPAUP() {
+        List<ScholarshipData> filteredList = new ArrayList<>();
+        for (ScholarshipData scholarship : allScholarships) {
+            if (scholarship.getGpaRequirement() > 3.0) {
                 filteredList.add(scholarship);
             }
         }

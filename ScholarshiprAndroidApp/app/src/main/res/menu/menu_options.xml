@@ -29,8 +29,20 @@
                     android:title="No Requirement"></item>
 
                     <item
-                        android:id="@+id/GPA"
-                        android:title="Required"></item>
+                        android:id="@+id/GPA1"
+                        android:title="0-1.0"></item>
+
+                    <item
+                        android:id="@+id/GPA2"
+                        android:title="1.0-2.0"></item>
+
+                    <item
+                        android:id="@+id/GPA3"
+                        android:title="2.0-3.0"></item>
+
+                    <item
+                        android:id="@+id/GPA4"
+                        android:title=">=3.0"></item>
 
                 </menu>
 
