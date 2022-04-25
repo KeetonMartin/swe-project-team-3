@@ -336,12 +336,20 @@ public class MainActivity extends AppCompatActivity {
             Log.v("debug", "Connection has not timed out");
             for (int i = 0; i < jso.length(); i++) {
                 JSONObject value = jso.getJSONObject(i);
-                Log.v("debug", "Value of Value:" + value);
+                Log.v("debug", "This scholarship:" + value);
+
                 name = value.getString("name");
                 Log.v("debug", "Value of Name:" + name);
+
+                status = value.getString("approvalStatus");
+                Log.v("debug", "Value of Status:" + status);
+                if (!status.equals("true")) {
+                    Log.v("debug", "Skipping over unapproved scholarship \""+name+"\".");
+                    continue;
+                }
+
                 if(value.isNull("org")){
                     org = " ";
-
                 }else{
                     org = value.getString("org");
                 }
@@ -350,18 +358,17 @@ public class MainActivity extends AppCompatActivity {
 
                 if(value.isNull("description")){
                     descrip = " ";
-
                 }else{
                     descrip = value.getString("description");
                 }
                 Log.v("debug", "Value of Descrip:" + descrip);
-                status = value.getString("approvalStatus");
 
-                Log.v("debug", "Value of Name:" + status);
+                if(value.isNull("dueDate")){
+                    date = null;
 
-
-                date = ZonedDateTime.parse(value.getString("dueDate"));
-
+                }else{
+                    date = ZonedDateTime.parse(value.getString("dueDate"));
+                }
 
                 if(value.isNull("gpaRequirement")){
                     gpa = 0;
@@ -380,7 +387,6 @@ public class MainActivity extends AppCompatActivity {
 
 
                 scholarship = new ScholarshipData(name,org,descrip,amount,status,date,gpa);
-                //scholarship = new ScholarshipData(name);
                 scholarships.add(scholarship);
                 Log.v("debug", "Attempting to add " + scholarship.getDescription());
                 Log.v("debug", "Attempting to add " + name);
