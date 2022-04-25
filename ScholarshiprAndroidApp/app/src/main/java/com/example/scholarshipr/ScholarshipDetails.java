@@ -33,6 +33,7 @@ public class ScholarshipDetails extends AppCompatActivity {
         //tvAmount.setText(extras.getInt("amount"));
         tvAmount.setText(String.valueOf(extras.getInt("amount")));
         tvDescription.setText(extras.getString("scholarshipDesc"));
+        tvDueDate.setText(String.valueOf(extras.get("date")));
     }
 }
 
