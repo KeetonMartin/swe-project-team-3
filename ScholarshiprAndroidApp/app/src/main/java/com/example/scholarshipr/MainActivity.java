@@ -77,10 +77,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onRefresh() {
                 Log.i(TAG, "Refreshing scholarships...");
+
+//                List<ScholarshipData> oldShips = scholarshipAdapter.getNewListOfShips();
+                List<String> oldShipNames = scholarshipAdapter.getScholarshipNames();
+
                 // Clear out old items before appending in the new ones
                 scholarshipAdapter.clear();
                 // Get and add new items to adapter
                 getAllScholarships();
+
+//                List<ScholarshipData> newShips = scholarshipAdapter.getNewListOfShips();
+                List<String> newShipNames = scholarshipAdapter.getScholarshipNames();
+
+                if (newShipDetected(oldShipNames, newShipNames)) {
+                    Log.i(TAG, "Found some new 'ships!");
+                    notifyOfNewShip();
+                }
+
                 // Now we call setRefreshing(false) to signal refresh has finished
                 swipeContainer.setRefreshing(false);
             }
@@ -100,6 +113,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private boolean newShipDetected(List<String> oldShips, List<String> newShips) {
+        for (String shipName :
+                newShips) {
+            if (! oldShips.contains(shipName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private void notifyOfNewShip() {
+        String message = "New Scholarships!";
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
 
     private void openSuggestScholarshipActivity() {

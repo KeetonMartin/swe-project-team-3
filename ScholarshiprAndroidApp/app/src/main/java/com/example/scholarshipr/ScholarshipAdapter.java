@@ -19,6 +19,7 @@ import com.bumptech.glide.load.resource.bitmap.CircleCrop;*/
 
 //import org.parceler.Parcels;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ScholarshipAdapter extends RecyclerView.Adapter<ScholarshipAdapter.ViewHolder>{
@@ -28,6 +29,44 @@ public class ScholarshipAdapter extends RecyclerView.Adapter<ScholarshipAdapter.
     public ScholarshipAdapter(Context context, List<ScholarshipData> scholarshipData) {
         this.context = context;
         this.scholarshipData = scholarshipData;
+    }
+
+    //Source used: https://www.geeksforgeeks.org/overriding-equals-method-in-java/
+    // Overriding equals() to compare two ScholarshipAdapter objects
+    @Override
+    public boolean equals(Object o) {
+
+        // If the object is compared with itself then return true
+        if (o == this) {
+            return true;
+        }
+
+        /* Check if o is an instance of ScholarshipAdapter or not
+          "null instanceof [type]" also returns false */
+        if (!(o instanceof ScholarshipAdapter)) {
+            return false;
+        }
+
+        // typecast o to ScholarshipAdapter so that we can compare data members
+        ScholarshipAdapter c = (ScholarshipAdapter) o;
+
+        // Compare the data members and return accordingly
+        int countOfDifferentShips = 0;
+
+        for (int i = 0; i < scholarshipData.size(); i++) {
+            if (! scholarshipData.get(i).equals(c.getScholarshipDataList().get(i)) ) {
+                countOfDifferentShips += 1;
+            };
+        }
+
+        return (countOfDifferentShips == 0);
+    }
+
+    public List<ScholarshipData> getNewListOfShips() {
+        ArrayList<ScholarshipData> newList = new ArrayList<>();
+        newList.addAll(scholarshipData);
+
+        return newList;
     }
 
     // Involves inflating a layout from XML and returning the holder
@@ -52,6 +91,21 @@ public class ScholarshipAdapter extends RecyclerView.Adapter<ScholarshipAdapter.
     @Override
     public int getItemCount() {
         return scholarshipData.size();
+    }
+
+    public List<ScholarshipData> getScholarshipDataList() {
+        return scholarshipData;
+    }
+
+    public List<String> getScholarshipNames() {
+        List<String> output = new ArrayList<>();
+
+        for (ScholarshipData ship :
+                scholarshipData) {
+            output.add(ship.getName());
+        }
+
+        return output;
     }
 
     // Clean all elements of the recycler

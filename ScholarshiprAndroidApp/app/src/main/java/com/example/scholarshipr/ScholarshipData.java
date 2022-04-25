@@ -44,6 +44,35 @@ public class ScholarshipData extends AppCompatActivity {
     }
 
 
+    // Overriding equals() to compare two ScholarshipData objects
+    @Override
+    public boolean equals(Object o) {
+
+        // If the object is compared with itself then return true
+        if (o == this) {
+            return true;
+        }
+
+        /* Check if o is an instance of ScholarshipData or not
+          "null instanceof [type]" also returns false */
+        if (!(o instanceof ScholarshipData)) {
+            return false;
+        }
+
+        // typecast o to ScholarshipData so that we can compare data members
+        ScholarshipData c = (ScholarshipData) o;
+
+        // Compare the data members and return accordingly
+        return name.equals(c.name)
+                && org.equals(c.org)
+                && description.equals(c.description)
+                && amount == c.amount
+                && approvalStatus.equals(c.approvalStatus)
+                && dueDate.equals(c.dueDate)
+                && gpaRequirement == c.gpaRequirement;
+    }
+
+
 
     public String getName(){
         return name;
