@@ -6,7 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context=".ScholarshipData"
-    android:orientation="vertical">
+    app:backgroundTint="@color/black"
+    android:orientation="vertical"
+    >
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/swipeContainer"
