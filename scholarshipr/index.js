@@ -18,34 +18,34 @@ var Scholarship = require('./Scholarship.js');
 // endpoint for creating a new 
 // this is the action of the "create new scholarship" form
 app.use('/create', (req, res) => {
-
-	if (!req.body.name ) {
-		res.redirect('/');
-	}
+	res.type('html').status(200);
+	
 
 	// construct the scholarship from the form data which is in the request body
 	var newScholarship = new Scholarship({
-		name: req.body.name,
-		org: req.body.org,
-		description: req.body.description,
-		dollarAmount: req.body.dollarAmount,
-		approvalStatus: (req.body.approvalStatus == "1" ? true : false),
-		dueDate: req.body.dueDate,
-		gpaRequirement: req.body.gpaRequirement,
+
+		name: (req.query.name ? req.query.name : req.body.name),
+		org: (req.query.org ? req.query.org : req.body.org),
+		description: (req.query.description ? req.query.description : req.body.description),
+		dollarAmount: (req.query.dollarAmount ? req.query.dollarAmount : req.body.dollarAmount),
+		approvalStatus: (req.query.approvalStatus ? req.query.approvalStatus : (req.body.approvalStatus == "1" ? true : false)),
+		dueDate: (req.query.dueDate ? req.query.dueDate : req.body.dueDate),
+		gpaRequirement: (req.query.gpaRequirement ? req.query.gpaRequirement : req.body.gpaRequirement),
 	});
 
 	// save the scholarship to the database
 	newScholarship.save((err) => {
 		if (err) {
-			res.type('html').status(200);
+			console.log("errorrrr");
+			console.log(err);
+
 			res.write(getPageOutline());
-			// res.write(starterTemplate)
 			res.write("<div class=\"container mt-2 pl-2\">");
 			res.write("<p>Sorry, there has been an error while creating a scholarship. Please see the details below:</p>");
 			res.write("<p>" + err + "</p>");
 			res.write("<a class=\"btn btn-info btn-sm\" href=\"/all\">Return</a>");
 			res.write(' </div> </body></html>');
-			res.end();
+			// res.end();
 		}
 		else {
 			console.log("Successfully created new scholarship");
@@ -56,12 +56,12 @@ app.use('/create', (req, res) => {
 );
 
 
-
 app.use('/edit', (req, res) => {
+	res.type('html').status(200);
+
 	var query = {"_id" : req.query._id };
 	Scholarship.findOne( query, (err, result) => {
 		if (err) {
-		    res.type('html').status(200);
 			res.write(getPageOutline());
 			// res.write(starterTemplate)
 			res.write("<div class=\"container mt-2 pl-2\">");
@@ -72,7 +72,6 @@ app.use('/edit', (req, res) => {
 			res.end();
 		}
 		else if (!result){
-			res.type('html').status(200);
 			res.write(getPageOutline());
 			// res.write(starterTemplate)
 			res.write("<div class=\"container mt-2 pl-2\">");
@@ -89,6 +88,7 @@ app.use('/edit', (req, res) => {
     });
 
 app.use('/update', (req, res) => {
+	res.type('html').status(200);
 	// construct the scholarship from the form data which is in the request body
 	var filter = { '_id': req.query._id };
 	
@@ -107,7 +107,7 @@ app.use('/update', (req, res) => {
 
 	Scholarship.findOneAndUpdate(filter, action, (err, orig) => {
 		if (err) {
-			res.type('html').status(200);
+			
 			res.write(getPageOutline());
 			res.write("<div class=\"container mt-2 pl-2\">");
 			res.write("<p>" + err + "</p>");
@@ -116,7 +116,6 @@ app.use('/update', (req, res) => {
 			res.end();
 		}
 		else if (!orig) {
-			res.type('html').status(200);
 			res.write(getPageOutline());
 			res.write("<div class=\"container mt-2 pl-2\">");
 			res.write("<p>Scholarship with requested ID was not found.</p>");
@@ -270,6 +269,7 @@ app.use('/all', (req, res) => {
 });
 
 app.use('/viewDetail', (req, res) => {
+	res.type('html').status(200);
 	if (!req.query._id) {
 		console.log('uh oh, no id in the query parameters')
 		return res.type('html').write('uh oh, no id in the query parameters')
@@ -279,11 +279,11 @@ app.use('/viewDetail', (req, res) => {
 		Scholarship.findOne({'_id':id}, (err, scholarship) => {
 			if (err) {
 				console.log("Unexpected error")
-				return res.type('html').write("Unexpected error")
+				return res.write("Unexpected error")
 			}
 			else if (!scholarship) {
 				console.log(`Could not find scholarship with id ${id}`)
-				res.type('html').status(200);
+				
 				res.write(getPageOutline());
 				res.write("<div class=\"container mt-2 pl-2\">");
 				res.write("<p>Could not find scholarship with id" + id +"</p>");
@@ -294,7 +294,6 @@ app.use('/viewDetail', (req, res) => {
 			}
 			else {
 				console.log(`Found scholarship with id ${scholarship._id}`)
-				res.type('html').status(200);
 
 				res.write(getPageOutline());
 				res.write(getCardHTML(scholarship));
@@ -365,31 +364,65 @@ function getCardHTML(scholarship) {
 }
 
 app.use('/delete', (req, res) => {
+	res.type('html').status(200);
+
 	if (!req.query._id) {
 		console.log('uh oh, no id in the query parameters')
-		return res.type('html').write('uh oh, no id in the query parameters')
+		return res.write('uh oh, no id in the query parameters')
 	} else {
 		const id = req.query._id
 		console.log(`Trying to delete scholarship: ${id}`)
 		Scholarship.findOneAndDelete({'_id':id}, (err, scholarship) => {
 			if (err) {
 				console.log("Unexpected error")
-				return res.type('html').write("Unexpected error")
+				return res.write("Unexpected error")
 			}
 			else if (!scholarship) {
 				// A strange error I can't debug happens here. Recreate by
 				// visiting http://localhost:3000/delete?_id=5
 				console.log(`Could not find scholarship with id ${id}`)
-				return res.type('html').write(`Could not find scholarship with id ${id}`)
+				res.write(getPageOutline());
+				res.write("<div class=\"container mt-2 pl-2\">");
+				res.write(`Could not find scholarship with id ${id}`);
+				res.write("<br/><a class=\"btn btn-info btn-sm\" href=\"/all\">Return</a>");
+				res.write(' </div> </body></html>');
+				
+				res.end();
 			}
 			else {
 				console.log(`Deleted scholarship with id ${scholarship._id}`)
+				res.redirect(302, '/all');
+			}
+		});
+	}
+});
+
+
+app.use('/approve', (req, res) => {
+	res.type('html').status(200);
+	if (!req.query._id) {
+		console.log('uh oh, no id in the query parameters')
+		return res.type('html').write('uh oh, no id in the query parameters')
+	} else {
+		const id = req.query._id
+		console.log(`Trying to approve scholarship: ${id}`)
+		var action = {'$set': {approvalStatus: "true"}}
+		Scholarship.findOneAndUpdate({'_id':id}, action, (err, scholarship) => {
+			if (err) {
+				console.log("Unexpected error")
+				return res.write("Unexpected error")
+			}
+			else if (!scholarship) {
+				console.log(`Could not find scholarship with id ${id}`)
+				return res.write(`Could not find scholarship with id ${id}`)
+			}
+			else {
+				console.log(`Approved scholarship with id ${scholarship._id}`)
 			}
 		});
 	}
     res.redirect(302, '/all');
 });
-
 
 app.use('/approve', (req, res) => {
 	if (!req.query._id) {
@@ -415,7 +448,6 @@ app.use('/approve', (req, res) => {
 	}
     res.redirect(302, '/all');
 });
-
 
 // endpoint for accessing data via the web api
 // to use this, make a request for /api to get an array of all Scholarship objects
