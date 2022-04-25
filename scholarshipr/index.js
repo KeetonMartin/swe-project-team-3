@@ -357,7 +357,7 @@ function getCardHTML(scholarship) {
 	}
 						
 	returnableString += "<a class=\"btn btn-warning btn-sm mr-1\" href=\"/edit?_id=" + scholarship._id + "\">Edit</a>";
-	returnableString += "<a class=\"btn btn-danger btn-sm\" href=\"#\" onclick=\"if (confirm('Delete scholarship &quot;` + scholarship.name + `&quot;?')) { window.location = '/delete?_id=` + scholarship.id + `' }\">Delete</a>"; 
+	returnableString += `<a class="btn btn-danger btn-sm" href="#" onclick="if (confirm('Delete scholarship &quot;` + scholarship.name + `&quot;?')) { window.location = '/delete?_id=` + scholarship.id + `' }">Delete</a>`;
 	returnableString += "</div></div></div></div>";
 
 	return returnableString;
