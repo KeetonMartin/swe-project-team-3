@@ -1,10 +1,12 @@
 package com.example.scholarshipr;
 
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -42,7 +44,7 @@ public class SuggestScholarshipActivity extends AppCompatActivity {
     public void sendSuggestion() {
         Log.v("debug", "Submit button was clicked!!!! WOW!");
         final EditText nameField = (EditText) findViewById(R.id.editTextScholarshipName);
-        String name = nameField.getText().toString();
+        String name = nameField.getText().toString().trim();
         final EditText orgField = (EditText) findViewById(R.id.editTextScholarshipOrganization);
         String org = orgField.getText().toString();
         final EditText descriptionField = (EditText) findViewById(R.id.editTextScholarshipDescription);
@@ -56,42 +58,57 @@ public class SuggestScholarshipActivity extends AppCompatActivity {
 
         Log.v("debug", "name: " + name + " org: " + org + " description: "+ description + " amount: " + amount + " deadline: " + deadline + " gpa: "+ gpa);
 
-        try {
-            ExecutorService executor = Executors.newSingleThreadExecutor();
-            executor.execute(() -> {
-                try {
-                    // assumes that there is a server running on the AVD's host on port 3000
-                    // and that it has a /create endpoint that creates a scholarship
+        if (TextUtils.isEmpty(name)){
+            nameField.setError("Please Enter a name");
+        }else {
 
-                    URL url = new URL("http://10.0.2.2:3000/create?name="+name+"&org="+org+"&description="+description+"&dollarAmount="+amount+"&approvalStatus=false&dueDate="+deadline+"&gpaRequirement="+gpa);
+            // Make a GET request to the /create endpoint to create the scholarship
+            try {
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                executor.execute(() -> {
+                    try {
+                        // assumes that there is a server running on the AVD's host on port 3000
+                        // and that it has a /create endpoint that creates a scholarship
 
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    conn.setRequestMethod("GET");
-                    conn.connect();
+                        URL url = new URL("http://10.0.2.2:3000/create?name=" + name + "&org=" + org + "&description=" + description + "&dollarAmount=" + amount + "&approvalStatus=false&dueDate=" + deadline + "&gpaRequirement=" + gpa);
 
-                    Log.v("debug", "We connected. Connection: " + conn);
+                        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                        conn.setRequestMethod("GET");
+                        conn.connect();
 
-                    Scanner in = new Scanner(url.openStream());
-                    String response = in.nextLine();
+                        Log.v("debug", "We connected. Connection: " + conn);
 
-                    Log.v("debug", "Response from server: " + response);
+                        Scanner in = new Scanner(url.openStream());
+                        String response = in.nextLine();
+
+                        Log.v("debug", "Response from server: " + response);
 
 
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                });
 
-            });
+                Toast.makeText(
+                        this,
+                        "Your scholarship suggestion was submitted",
+                        Toast.LENGTH_LONG)
+                        .show();
 
-            // this waits for up to 2 seconds
-            // it's a bit of a hack because it's not truly asynchronous
-            // but it should be okay for our purposes (and is a lot easier)
-            executor.awaitTermination(5, TimeUnit.SECONDS);
+                // this waits for up to 2 seconds
+                // it's a bit of a hack because it's not truly asynchronous
+                // but it should be okay for our purposes (and is a lot easier)
+                executor.awaitTermination(1, TimeUnit.SECONDS);
 
-        } catch (Exception e) {
-            // uh oh
-            e.printStackTrace();
+            } catch (Exception e) {
+                // uh oh
+                e.printStackTrace();
+            }
+
+            // Close the Suggest a Scholarship view
+            finish();
+
         }
     }
 }
